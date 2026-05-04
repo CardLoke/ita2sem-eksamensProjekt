@@ -7,6 +7,7 @@
 <h3>SignUp</h3>
 <button @onclick="Hjem">Hjem</button>
 
+<div class="signUp-container">
 <InputText @bind-Value="aNewUser.Username"
            class="form-control mb-2"
            placeholder="Indtast ønskede brugernavn" />
@@ -18,6 +19,7 @@
 <InputText @bind-Value="aNewUser.Password"
            class="form-control mb-2"
            placeholder="Indtast ønskede kodeord" />
+</div>
 
 <button class="btn btn-primary" @onclick="OnClickOpret">Opret bruger</button>
 
@@ -26,7 +28,9 @@
 
     private async Task OnClickOpret()
     {
-        
+        aNewUser.Id = Random.Shared.Next();
+        await http.PostAsJsonAsync("http://localhost:5112/api/user/signUp", aNewUser);
+        aNewUser = new();
     }
 
 
