@@ -1,6 +1,23 @@
-﻿namespace ServerApi.Repositories
+﻿using ServerApi.Interfaces;
+using Core.Model;
+using System.Collections.Generic;
+using MongoDB.Driver;
+
+namespace ServerApi.Repositories
 {
-    public class UserRepositoryMongoDB
+    public class UserRepositoryMongoDB : IUser
     {
+        private readonly IMongoCollection<User>? _Users;
+
+        public UserRepositoryMongoDB()
+        {
+            var client = new MongoClient("mongodb+srv://kris600m:eyh94zkh@cluster0.xpou06p.mongodb.net/");
+            var database = client.GetDatabase("SessionSync");
+            _Users = database.GetCollection<User>("Users");
+
+        }
+        public void SignUp(User user) {
+            _Users.InsertOne(user);
+        }
     }
 }

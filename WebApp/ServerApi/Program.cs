@@ -1,9 +1,26 @@
+using ServerApi.Repositories;
+using ServerApi.Interfaces;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddSingleton<IUser, UserRepositoryMongoDB>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("policy",
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyHeader();
+                      });
+});
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -17,6 +34,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("policy");
 
 app.MapControllers();
 

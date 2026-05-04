@@ -24,7 +24,7 @@
 <button class="btn btn-primary" @onclick="OnClickOpret">Opret bruger</button>
 
 @code {
-    private User aNewUser;
+    private User aNewUser = new User();
 
     private async Task OnClickOpret()
     {

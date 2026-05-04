@@ -1,6 +1,9 @@
-﻿namespace ServerApi.Interfaces
+﻿using System.Collections.Generic;
+using Core.Model;
+namespace ServerApi.Interfaces
 {
-    public class IUser
+    public interface IUser
     {
+        void SignUp(User user);
     }
 }
