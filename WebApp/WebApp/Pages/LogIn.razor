@@ -1,0 +1,81 @@
+﻿@page "/logIn"
+@inject HttpClient http
+@using Core.Model;
+@using Blazored.SessionStorage
+@inject ISessionStorageService sessionStorage
+@inject NavigationManager navManager
+
+<PageTitle>Log ind</PageTitle>
+
+<button @onclick="Hjem">Hjem</button>
+
+<h3>Log ind</h3>
+
+<div class="login-container">
+
+    <InputText @bind-Value="username"
+               class="form-control mb-2"
+               placeholder="Indtast brugernavn" />
+
+
+    <InputText type="password"
+               class="form-control mb-2"
+               @bind-Value="password"
+               placeholder="Indtast password" />
+
+    <div style="text-align: center">
+        <button class="btn btn-primary" @onclick="OnClickLogin">Login</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorText))
+    {
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span class="error-text">@errorText</span>
+        </div>
+    }
+</div>
+
+@code {
+
+    private string username = "";
+    private string password = "";
+    string errorText = "";
+
+    private async Task OnClickLogin()
+    {
+
+        User? loggedIn = ValidLogin(username, password);
+        if (loggedIn != null)
+        {
+            await sessionStorage.SetItemAsync("user", loggedIn);
+
+            navManager.NavigateTo("/", true);
+        }
+        else
+        {
+            errorText = "Wrong email or password - try again...";
+        }
+    }
+
+    List<User> mUsers = new();
+    protected async override Task OnInitializedAsync()
+    {
+        mUsers = await http.GetFromJsonAsync<List<User>>("http://localhost:5111/api/user");
+        Console.WriteLine(mUsers);
+    }
+
+    public User? ValidLogin(string name, string password)
+    {
+        foreach (User u in mUsers)
+            if (u.BrugerNavn == name && u.Password == password)
+            {
+                return u;
+            }
+        return null;
+    }
+    public void Hjem()
+    {
+        navManager.NavigateTo("/");
+    }
+}

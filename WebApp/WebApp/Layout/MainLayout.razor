@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager;
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +7,8 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <button @onclick="SignUp">Sign Up</button>
+            <button @onclick="LogIn">Log In</button>
         </div>
 
         <article class="content px-4">
@@ -14,3 +16,13 @@
         </article>
     </main>
 </div>
+@code{
+    public void SignUp()
+    {
+        navigationManager.NavigateTo("signUp");
+    }
+    public void LogIn()
+    {
+        navigationManager.NavigateTo("logIn");
+    }
+}

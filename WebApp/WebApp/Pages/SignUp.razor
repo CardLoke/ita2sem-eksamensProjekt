@@ -1,0 +1,11 @@
+﻿@page "/signUp"
+@inject NavigationManager navigationManager;
+<h3>SignUp</h3>
+<button @onclick="Hjem">Hjem</button>
+
+@code {
+    public void Hjem()
+    {
+        navigationManager.NavigateTo("/");
+    }
+}
