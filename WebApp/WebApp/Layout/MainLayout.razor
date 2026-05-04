@@ -41,7 +41,8 @@
     public void LogOut()
     {
         sessionStorage.ClearAsync();
-        navigationManager.NavigateTo("/home");
+        loggedIn = null;
+        navigationManager.NavigateTo("logIn");
     }
 
     User? loggedIn;
