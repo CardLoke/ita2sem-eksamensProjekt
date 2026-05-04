@@ -1,7 +1,23 @@
-﻿@page "/"
+﻿@using Core.Model;
+@inject NavigationManager navigationManager;
+@using Blazored.SessionStorage;
+@inject ISessionStorageService sessionStorage;
+@page "/home"
 
 <PageTitle>Home</PageTitle>
 
 <h1>Session Sync</h1>
 
-Welcome to your new app.
+Welcome to Session Sync
+
+<button @onclick="AddStu">Add a studio</button>
+
+@code
+{
+    
+    public void AddStu()
+    {
+        navigationManager.NavigateTo("/AddStudio");
+    }
+    
+}

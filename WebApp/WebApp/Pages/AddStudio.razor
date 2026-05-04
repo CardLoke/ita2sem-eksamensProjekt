@@ -1,0 +1,22 @@
+@page "/AddStudio"
+@using Core.Model;
+@inject NavigationManager navigationManager;
+@using Blazored.SessionStorage;
+@inject ISessionStorageService sessionStorage;
+<h3>AddStudio</h3>
+
+@code {
+    
+    
+    
+    
+    User? loggedIn;
+    protected async override Task OnInitializedAsync()
+    {
+        loggedIn = await sessionStorage.GetItemAsync<User?>("user");
+        if (loggedIn == null)
+        {
+            navigationManager.NavigateTo("/Home");
+        }
+    }
+}

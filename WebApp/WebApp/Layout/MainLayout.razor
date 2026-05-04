@@ -10,12 +10,17 @@
 
     <main>
         <div class="top-row px-4">
-            <button @onclick="SignUp">Sign Up</button>
-            <button @onclick="LogIn">Log In</button>
             @if (loggedIn != null)
             {
-                <a>logged in as @loggedIn.Username</a>
+                <a>Logged in as @loggedIn.Username</a>
+                <button @onclick="LogOut">Log out</button>
             }
+            else
+            {
+                    <button id="signUp" @onclick="SignUp">Sign Up</button>
+                    <button id="logIn" @onclick="LogIn">Log In</button>
+            }
+            
         </div>
 
         <article class="content px-4">
@@ -32,6 +37,13 @@
     {
         navigationManager.NavigateTo("logIn");
     }
+
+    public void LogOut()
+    {
+        sessionStorage.ClearAsync();
+        navigationManager.NavigateTo("/home");
+    }
+
     User? loggedIn;
     protected async override Task OnInitializedAsync()
     {
