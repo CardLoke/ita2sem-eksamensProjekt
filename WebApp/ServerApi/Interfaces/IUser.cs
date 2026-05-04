@@ -5,5 +5,6 @@ namespace ServerApi.Interfaces
     public interface IUser
     {
         void SignUp(User user);
+        Task<User?> LogIn(LoginRequest loginRequest);
     }
 }

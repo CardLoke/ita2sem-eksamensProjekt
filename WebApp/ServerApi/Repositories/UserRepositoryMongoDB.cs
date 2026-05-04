@@ -19,5 +19,11 @@ namespace ServerApi.Repositories
         public void SignUp(User user) {
             _Users.InsertOne(user);
         }
+        public async Task<User?> LogIn(LoginRequest loginRequest)
+        {
+            return await _Users.Find(u =>
+                u.Username == loginRequest.Username && u.Password == loginRequest.Password)
+                .FirstOrDefaultAsync();
+        }
     }
 }

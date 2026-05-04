@@ -41,39 +41,34 @@
     private string username = "";
     private string password = "";
     string errorText = "";
+    private User? loggedIn;
 
     private async Task OnClickLogin()
     {
-
-        User? loggedIn = ValidLogin(username, password);
-        if (loggedIn != null)
-        {
-            await sessionStorage.SetItemAsync("user", loggedIn);
-
-            navManager.NavigateTo("/", true);
-        }
-        else
-        {
-            errorText = "Wrong email or password - try again...";
-        }
-    }
-
-    List<User> mUsers = new();
-    protected async override Task OnInitializedAsync()
-    {
-        mUsers = await http.GetFromJsonAsync<List<User>>("http://localhost:5111/api/user");
-        Console.WriteLine(mUsers);
-    }
-
-    public User? ValidLogin(string name, string password)
-    {
-        foreach (User u in mUsers)
-            if (u.Username == name && u.Password == password)
+        var loginRequest = new LoginRequest
             {
-                return u;
+                Username = username,
+                Password = password
+            };
+        var response = await http.PostAsJsonAsync("http://localhost:5112/api/user/logIn", loginRequest);
+        User? loggedIn = null;
+        if (response.IsSuccessStatusCode)
+        {
+            loggedIn = await response.Content.ReadFromJsonAsync<User>();
+            if (loggedIn != null)
+            {
+                await sessionStorage.SetItemAsync("user", loggedIn);
+                Console.WriteLine($"logged in as {loggedIn.Username}");
+                navManager.NavigateTo("/", true);
             }
-        return null;
+            else
+            {
+                errorText = "Login failed: Invalid user data returned.";
+            }
+        }
+        
     }
+
     public void Hjem()
     {
         navManager.NavigateTo("/");

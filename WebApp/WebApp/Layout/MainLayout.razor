@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager navigationManager;
+@using Blazored.SessionStorage;
+@inject ISessionStorageService sessionStorage;
+@using Core.Model;
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -9,6 +12,10 @@
         <div class="top-row px-4">
             <button @onclick="SignUp">Sign Up</button>
             <button @onclick="LogIn">Log In</button>
+            @if (loggedIn != null)
+            {
+                <a>logged in as @loggedIn.Username</a>
+            }
         </div>
 
         <article class="content px-4">
@@ -24,5 +31,10 @@
     public void LogIn()
     {
         navigationManager.NavigateTo("logIn");
+    }
+    User? loggedIn;
+    protected async override Task OnInitializedAsync()
+    {
+        loggedIn = await sessionStorage.GetItemAsync<User?>("user");
     }
 }

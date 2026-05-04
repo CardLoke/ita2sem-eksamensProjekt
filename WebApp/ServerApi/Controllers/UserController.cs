@@ -20,4 +20,13 @@ public class UserController : ControllerBase
     {
         userRepo.SignUp(user);
     }
+    [HttpPost]
+    [Route("logIn")]
+    public async Task<User?> LogIn(LoginRequest loginRequest)
+    {
+        Console.WriteLine("hej");
+        User? loggedIn = await userRepo.LogIn(loginRequest);
+        return loggedIn;
+    }
+    
 }
