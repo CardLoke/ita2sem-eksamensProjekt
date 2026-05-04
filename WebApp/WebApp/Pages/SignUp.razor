@@ -1,9 +1,35 @@
 ﻿@page "/signUp"
+@inject HttpClient http
+@using Core.Model
+@using Blazored.SessionStorage
 @inject NavigationManager navigationManager;
+
 <h3>SignUp</h3>
 <button @onclick="Hjem">Hjem</button>
 
+<InputText @bind-Value="aNewUser.Username"
+           class="form-control mb-2"
+           placeholder="Indtast ønskede brugernavn" />
+
+<InputText @bind-Value="aNewUser.Mail"
+           class="form-control mb-2"
+           placeholder="Indtast din email" />
+
+<InputText @bind-Value="aNewUser.Password"
+           class="form-control mb-2"
+           placeholder="Indtast ønskede kodeord" />
+
+<button class="btn btn-primary" @onclick="OnClickOpret">Opret bruger</button>
+
 @code {
+    private User aNewUser;
+
+    private async Task OnClickOpret()
+    {
+        
+    }
+
+
     public void Hjem()
     {
         navigationManager.NavigateTo("/");

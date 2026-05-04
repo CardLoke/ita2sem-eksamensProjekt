@@ -68,7 +68,7 @@
     public User? ValidLogin(string name, string password)
     {
         foreach (User u in mUsers)
-            if (u.BrugerNavn == name && u.Password == password)
+            if (u.Username == name && u.Password == password)
             {
                 return u;
             }
