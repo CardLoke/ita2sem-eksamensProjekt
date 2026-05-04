@@ -15,7 +15,7 @@ public class UserController : ControllerBase
         userRepo = _repo;
     }
     [HttpPost]
-    [Route("/signUp")]
+    [Route("signUp")]
     public void SignUp(User user)
     {
         userRepo.SignUp(user);
