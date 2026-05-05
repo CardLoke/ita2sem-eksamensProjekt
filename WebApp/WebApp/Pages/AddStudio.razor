@@ -1,13 +1,42 @@
 @page "/AddStudio"
+@inject HttpClient http
 @using Core.Model;
 @inject NavigationManager navigationManager;
 @using Blazored.SessionStorage;
 @inject ISessionStorageService sessionStorage;
 <h3>AddStudio</h3>
 
+<div class="newStudio-container">
+    <InputText @bind-Value="aNewStudio.studioName"
+               class="form-control mb-2"
+               placeholder="Enter studio name" />
+
+    <InputNumber @bind-Value="aNewStudio.studioSize"
+               class="form-control mb-2"
+               placeholder="Enter studio size" />
+
+    <InputText @bind-Value="aNewStudio.studioDescription"
+               class="form-control mb-2"
+               placeholder="Enter a description" />
+    
+    <InputText @bind-Value="aNewStudio.studioEquipment"
+               class="form-control mb-2"
+               placeholder="What equipment would you like to add?" />
+    
+    <InputNumber @bind-Value="aNewStudio.studioPrice"
+               class="form-control mb-2"
+               placeholder="Enter an hourly rate" />
+    
+    <InputText @bind-Value="aNewStudio.studioAddress"
+               class="form-control mb-2"
+               placeholder="Enter address" />
+</div>
+
+<button @onclick="OnClickRegisterStudio">Register your studio!</button>
+
 @code {
     
-    
+    private Studio aNewStudio = new Studio();
     
     
     User? loggedIn;
@@ -19,4 +48,12 @@
             navigationManager.NavigateTo("/Home");
         }
     }
+    
+    private async Task OnClickRegisterStudio()
+    {
+        aNewStudio.studioId = Random.Shared.Next();
+        await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
+        aNewStudio = new();
+    }
+    
 }
