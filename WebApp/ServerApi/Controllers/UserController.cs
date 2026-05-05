@@ -28,5 +28,11 @@ public class UserController : ControllerBase
         User? loggedIn = await userRepo.LogIn(loginRequest);
         return loggedIn;
     }
+    [HttpPut]
+    [Route("edit")]
+    public async Task Edit(User user)
+    {
+        await userRepo.Edit(user);
+    }
     
 }

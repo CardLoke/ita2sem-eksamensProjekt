@@ -14,6 +14,7 @@
             {
                 <a>Logged in as @loggedIn.Username</a>
                 <button @onclick="LogOut">Log out</button>
+                <button @onclick="Edit">Edit Profile</button>
             }
             else
             {
@@ -45,6 +46,12 @@
         navigationManager.NavigateTo("logIn");
     }
 
+    public void Edit()
+    {
+        navigationManager.NavigateTo("editProfile");
+    }
+    
+    
     User? loggedIn;
     protected async override Task OnInitializedAsync()
     {

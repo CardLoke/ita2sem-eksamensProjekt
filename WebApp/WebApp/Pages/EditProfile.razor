@@ -1,0 +1,54 @@
+@page "/editProfile"
+@inject NavigationManager navigationManager;
+@using Blazored.SessionStorage;
+@inject ISessionStorageService sessionStorage;
+@using Core.Model;
+@inject HttpClient httpClient
+
+<h3>Edit Profile</h3>
+
+@if (user != null)
+{
+    <p>Nuværende Username: @user.Username</p>
+    <p> Ændr dit brugernavn til: </p>
+    <input @bind="user.Username"/>
+    
+    <p>Nuværende Password: @user.Password</p>
+    <p> Ændr dit password til: </p>
+    <input @bind="user.Password"/>
+    
+    <button @onclick="Save">Save</button>
+    <p>@message</p>
+    
+}
+else
+
+{
+    <p> Du er ikke logget ind</p>
+}
+
+@code {
+    User? user;
+    string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await sessionStorage.GetItemAsync<User?>("user");
+    }
+
+    public async Task Save()
+    {
+        var response = await httpClient.PutAsJsonAsync("http://localhost:5112/api/user/edit", user);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await sessionStorage.SetItemAsync("user", user);
+            message = "Profil gemt";
+        }
+        else
+        {
+            message = "Fejl ved gem";
+        }
+    }
+
+}

@@ -6,5 +6,6 @@ namespace ServerApi.Interfaces
     {
         void SignUp(User user);
         Task<User?> LogIn(LoginRequest loginRequest);
+        Task Edit(User user);
     }
 }
