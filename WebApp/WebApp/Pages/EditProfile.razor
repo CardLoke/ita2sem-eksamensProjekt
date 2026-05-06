@@ -19,6 +19,17 @@
     <p> Ændr dit password til: </p>
     <input @bind="user.Password"/>
     
+    <br /><br />
+    
+    <p> Nuværende rolle: @user.Role</p>
+    <p> Ændr din rolle:</p>
+    <select @bind="user.Role">
+        <option value="">Vælg Rolle</option>
+        <option value="Studieejer">Studieejer</option>
+        <option value="Studielejer">Studielejer</option>
+        <option value="Producer">Producer</option>
+    </select>
+    
     <button @onclick="Save">Save</button>
     <p>@message</p>
     
