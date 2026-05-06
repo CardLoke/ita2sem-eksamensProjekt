@@ -19,6 +19,14 @@
 <InputText @bind-Value="aNewUser.Password"
            class="form-control mb-2"
            placeholder="Enter password" />
+
+<select @bind="aNewUser.Role" class="form-control mb-2">
+    <option value="">Vælg Rolle</option>
+    <option value="Studieejer">Studieejer</option>
+    <option value="Studielejer">Studielejer</option>
+    <option value="Producer">Producer</option>
+</select>
+
 </div>
 
 <button class="btn btn-primary" @onclick="OnClickOpret">Opret bruger</button>

@@ -12,6 +12,8 @@ namespace Core.Model
         public string Password { get; set; } = "";  
         public int Id { get; set; }
 
+        public string Role { get; set; } = "";
+
         public string Producer { get; set; } = "";
     }
 }
