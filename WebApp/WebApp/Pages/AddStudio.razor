@@ -7,29 +7,30 @@
 <h3>AddStudio</h3>
 
 <div class="newStudio-container">
+    <p>What is the name of your studio?</p>
     <InputText @bind-Value="aNewStudio.studioName"
                class="form-control mb-2"
-               placeholder="Enter studio name" />
-
+               placeholder="Enter studio name"/>
+    <p>How many people does your studio fit?</p>
     <InputNumber @bind-Value="aNewStudio.studioSize"
-               class="form-control mb-2"
-               placeholder="Enter studio size" />
-
+                 class="form-control mb-2"
+                 placeholder="Enter studio size"/>
+    <p>Enter a description of your studio for potential customers to read!</p>
     <InputText @bind-Value="aNewStudio.studioDescription"
                class="form-control mb-2"
-               placeholder="Enter a description" />
-    
+               placeholder="Enter a description"/>
+    <p>Is there any extra equipment you would like to rent?</p>
     <InputText @bind-Value="aNewStudio.studioEquipment"
                class="form-control mb-2"
-               placeholder="What equipment would you like to add?" />
-    
+               placeholder="What equipment would you like to add?"/>
+    <p>How much would you like it to cost pr. hour?</p>
     <InputNumber @bind-Value="aNewStudio.studioPrice"
-               class="form-control mb-2"
-               placeholder="Enter an hourly rate" />
-    
+                 class="form-control mb-2"
+                 placeholder="Enter an hourly rate"/>
+    <p>What is the address?</p>
     <InputText @bind-Value="aNewStudio.studioAddress"
                class="form-control mb-2"
-               placeholder="Enter address" />
+               placeholder="Enter address"/>
 </div>
 
 <button @onclick="OnClickRegisterStudio">Register your studio!</button>

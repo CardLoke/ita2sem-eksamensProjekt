@@ -10,7 +10,10 @@
 
 Welcome to Session Sync
 
-<button @onclick="AddStu">Add a studio</button>
+@if (loggedIn != null)
+{
+    <button @onclick="AddStu">Add a studio</button>
+}
 
 @code
 {
@@ -20,4 +23,9 @@ Welcome to Session Sync
         navigationManager.NavigateTo("/AddStudio");
     }
     
+    User? loggedIn;
+    protected async override Task OnInitializedAsync()
+    {
+        loggedIn = await sessionStorage.GetItemAsync<User?>("user");
+    }
 }
