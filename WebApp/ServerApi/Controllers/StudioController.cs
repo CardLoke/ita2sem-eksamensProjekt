@@ -25,7 +25,7 @@ public class StudioController : ControllerBase
     }
 
     [HttpGet]
-    [Route("loadStudio")]
+    
     public List<Studio> Get()
     {
         return studioRepo.GetAll();

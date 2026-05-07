@@ -14,6 +14,7 @@ Welcome to Session Sync
 
 
 <div class="studios">
+    @if(studios != null){
     @foreach (var s in studios)
     {
         <p>@s.studioName</p>
@@ -22,6 +23,7 @@ Welcome to Session Sync
         <p>@s.studioSize</p>
         <p>@s.studioAddress</p>
         <p>@s.studioPrice</p>
+    }
     }
     @if (loggedIn != null)
     {
@@ -32,17 +34,18 @@ Welcome to Session Sync
 
 @code
 {
-    
+
     public void AddStu()
     {
         navigationManager.NavigateTo("/AddStudio");
     }
-    
+
     User? loggedIn;
     List<Studio>? studios = new();
     protected async override Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
-        studios = await http.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio/loadStudio");
+        studios = await http.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio");
+        
     }
 }
