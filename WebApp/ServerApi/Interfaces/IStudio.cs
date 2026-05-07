@@ -4,8 +4,9 @@ namespace ServerApi.Interfaces
 { 
     public interface IStudio
     {
-        void registerStudio(Studio studio);
+        void RegisterStudio(Studio studio);
         List<Studio> GetAll();
+        void Delete(int id);
     }
     
 }

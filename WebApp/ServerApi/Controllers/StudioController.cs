@@ -19,9 +19,9 @@ public class StudioController : ControllerBase
 
     [HttpPost]
     [Route("register")]
-    public void registerStudio(Studio studio)
+    public void RegisterStudio(Studio studio)
     {
-        studioRepo.registerStudio(studio);
+        studioRepo.RegisterStudio(studio);
     }
 
     [HttpGet]
@@ -29,6 +29,12 @@ public class StudioController : ControllerBase
     public List<Studio> Get()
     {
         return studioRepo.GetAll();
+    }
+    [HttpDelete]
+    [Route("delete/{id:int}")]
+    public void Delete(int id)
+    {
+        studioRepo.Delete(id);
     }
     
 }

@@ -17,7 +17,7 @@ namespace ServerApi.Repositories
 
         }
 
-        public void registerStudio(Studio studio)
+        public void RegisterStudio(Studio studio)
         {
             _studios.InsertOne(studio);
         }
@@ -25,6 +25,10 @@ namespace ServerApi.Repositories
         public List<Studio> GetAll()
         { //studio => true er egenligt et filter, men i dette tilfælde er alt true hver gang.
             return _studios.Find(studio => true).ToList();
+        }
+        public void Delete(int id)
+        {
+            _studios.DeleteOne(item => item.Id == id);
         }
         
     }

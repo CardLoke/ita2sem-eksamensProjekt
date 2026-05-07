@@ -8,27 +8,27 @@
 
 <div class="newStudio-container">
     <p>What is the name of your studio?</p>
-    <InputText @bind-Value="aNewStudio.studioName"
+    <InputText @bind-Value="aNewStudio.StudioName"
                class="form-control mb-2"
                placeholder="Enter studio name"/>
     <p>How many people does your studio fit?</p>
-    <InputNumber @bind-Value="aNewStudio.studioSize"
+    <InputNumber @bind-Value="aNewStudio.StudioSize"
                  class="form-control mb-2"
                  placeholder="Enter studio size"/>
     <p>Enter a description of your studio for potential customers to read!</p>
-    <InputText @bind-Value="aNewStudio.studioDescription"
+    <InputText @bind-Value="aNewStudio.StudioDescription"
                class="form-control mb-2"
                placeholder="Enter a description"/>
     <p>Is there any extra equipment you would like to rent?</p>
-    <InputText @bind-Value="aNewStudio.studioEquipment"
+    <InputText @bind-Value="aNewStudio.StudioEquipment"
                class="form-control mb-2"
                placeholder="What equipment would you like to add?"/>
     <p>How much would you like it to cost pr. hour?</p>
-    <InputNumber @bind-Value="aNewStudio.studioPrice"
+    <InputNumber @bind-Value="aNewStudio.StudioPrice"
                  class="form-control mb-2"
                  placeholder="Enter an hourly rate"/>
     <p>What is the address?</p>
-    <InputText @bind-Value="aNewStudio.studioAddress"
+    <InputText @bind-Value="aNewStudio.StudioAddress"
                class="form-control mb-2"
                placeholder="Enter address"/>
 </div>
@@ -36,10 +36,10 @@
 <button @onclick="OnClickRegisterStudio">Register your studio!</button>
 
 @code {
-    
+
     private Studio aNewStudio = new Studio();
-    
-    
+
+
     User? loggedIn;
     protected async override Task OnInitializedAsync()
     {
@@ -49,10 +49,11 @@
             navigationManager.NavigateTo("/Home");
         }
     }
-    
+
     private async Task OnClickRegisterStudio()
     {
         aNewStudio.Id = Random.Shared.Next();
+        aNewStudio.Owner = loggedIn.Username;
         await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
         aNewStudio = new();
     }
