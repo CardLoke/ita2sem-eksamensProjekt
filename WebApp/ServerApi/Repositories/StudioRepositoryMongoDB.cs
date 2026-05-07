@@ -7,21 +7,25 @@ namespace ServerApi.Repositories
 {
     public class StudioRepositoryMongoDB : IStudio
     {
-        private readonly IMongoCollection<Studio>? _Studios;
+        private readonly IMongoCollection<Studio>? _studios;
 
         public StudioRepositoryMongoDB()
         {
             var client = new MongoClient("mongodb+srv://SessionSyncVitus:ilDBtBfI3Sr81WOl@cluster0.uq6pnjx.mongodb.net/");
             var database = client.GetDatabase("SessionSync");
-            _Studios = database.GetCollection<Studio>("Studio");
+            _studios = database.GetCollection<Studio>("Studio");
 
         }
 
         public void registerStudio(Studio studio)
         {
-            _Studios.InsertOne(studio);
+            _studios.InsertOne(studio);
         }
-        
+
+        public List<Studio> GetAll()
+        { //studio => true er egenligt et filter, men i dette tilfælde er alt true hver gang.
+            return _studios.Find(studio => true).ToList();
+        }
         
     }
 }

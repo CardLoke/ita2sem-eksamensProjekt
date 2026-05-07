@@ -1,7 +1,9 @@
-﻿@using Core.Model;
+﻿@using System.Net
+@using Core.Model;
 @inject NavigationManager navigationManager;
 @using Blazored.SessionStorage;
 @inject ISessionStorageService sessionStorage;
+@inject HttpClient http
 @page "/"
 
 <PageTitle>Home</PageTitle>
@@ -10,10 +12,23 @@
 
 Welcome to Session Sync
 
-@if (loggedIn != null)
-{
-    <button @onclick="AddStu">Add a studio</button>
-}
+
+<div class="studios">
+    @foreach (var s in studios)
+    {
+        <p>@s.studioName</p>
+        <p>@s.studioDescription</p>
+        <p>@s.studioEquipment</p>
+        <p>@s.studioSize</p>
+        <p>@s.studioAddress</p>
+        <p>@s.studioPrice</p>
+    }
+    @if (loggedIn != null)
+    {
+        <button @onclick="AddStu">Add a studio</button>
+    }
+    
+</div>
 
 @code
 {
@@ -24,8 +39,10 @@ Welcome to Session Sync
     }
     
     User? loggedIn;
+    List<Studio>? studios = new();
     protected async override Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
+        studios = await http.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio/loadStudio");
     }
 }

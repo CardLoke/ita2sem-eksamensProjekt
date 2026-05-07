@@ -8,7 +8,6 @@ public class Studio
     public string studioEquipment { get; set; } = "";
     public string studioAddress { get; set; } = "";
     public string studioDescription { get; set; } = "";
-    
-    public int studioId { get; set; }
+    public int Id { get; set; }
     
 }

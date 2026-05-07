@@ -5,7 +5,7 @@ namespace ServerApi.Interfaces
     public interface IStudio
     {
         void registerStudio(Studio studio);
-
+        List<Studio> GetAll();
     }
-
+    
 }

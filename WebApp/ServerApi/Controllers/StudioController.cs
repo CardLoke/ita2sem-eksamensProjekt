@@ -2,6 +2,7 @@ using Core.Model;
 using ServerApi.Interfaces;
 using ServerApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using ZstdSharp.Unsafe;
 
 namespace ServerApi.Controllers;
 
@@ -21,6 +22,13 @@ public class StudioController : ControllerBase
     public void registerStudio(Studio studio)
     {
         studioRepo.registerStudio(studio);
+    }
+
+    [HttpGet]
+    [Route("loadStudio")]
+    public List<Studio> Get()
+    {
+        return studioRepo.GetAll();
     }
     
 }

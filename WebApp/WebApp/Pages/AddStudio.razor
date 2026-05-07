@@ -52,7 +52,7 @@
     
     private async Task OnClickRegisterStudio()
     {
-        aNewStudio.studioId = Random.Shared.Next();
+        aNewStudio.Id = Random.Shared.Next();
         await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
         aNewStudio = new();
     }
