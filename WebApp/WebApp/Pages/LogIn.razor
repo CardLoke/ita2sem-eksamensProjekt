@@ -5,71 +5,92 @@
 @inject ISessionStorageService sessionStorage
 @inject NavigationManager navManager
 
-<PageTitle>Log ind</PageTitle>
-
-<button @onclick="Hjem">Hjem</button>
-
-<h3>Log ind</h3>
-
-<div class="login-container">
-
-    <InputText @bind-Value="username"
-               class="form-control mb-2"
-               placeholder="Indtast brugernavn" />
 
 
-    <InputText type="password"
-               class="form-control mb-2"
-               @bind-Value="password"
-               placeholder="Indtast password" />
+@using Core.Model;
 
-    <div style="text-align: center">
-        <button class="btn btn-primary" @onclick="OnClickLogin">Login</button>
-    </div>
+<PageTitle>Log ind - Session Sync</PageTitle>
 
-    @if (!string.IsNullOrEmpty(errorText))
-    {
-        <div class="error-message">
-            <span class="error-icon">⚠️</span>
-            <span class="error-text">@errorText</span>
+<div class="login-page">
+    <div class="login-container">
+
+        <div class="login-header">
+            <h1>Velkommen tilbage</h1>
+            <p>Log ind for at administrere dine studier</p>
         </div>
-    }
+
+        <div class="form-group">
+            <label>Brugernavn</label>
+            <InputText @bind-Value="username"
+                       class="form-input"
+                       placeholder="Indtast dit brugernavn" />
+        </div>
+
+        <div class="form-group">
+            <label>Adgangskode</label>
+            <InputText type="password"
+                       @bind-Value="password"
+                       class="form-input"
+                       placeholder="Indtast din adgangskode" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorText))
+        {
+            <div class="error-message">
+                ⚠️ @errorText
+            </div>
+        }
+
+        <button class="login-btn" @onclick="OnClickLogin">
+            Log ind
+        </button>
+
+        <div class="login-footer">
+            <button class="back-btn" @onclick="Hjem">
+                ← Tilbage til forsiden
+            </button>
+        </div>
+    </div>
 </div>
 
 @code {
-
     private string username = "";
     private string password = "";
-    string errorText = "";
-    private User? loggedIn;
+    private string errorText = "";
 
     private async Task OnClickLogin()
     {
+        errorText = "";
+
         var loginRequest = new LoginRequest
-            {
-                Username = username,
-                Password = password
-            };
+        {
+            Username = username,
+            Password = password
+        };
+
         var response = await http.PostAsJsonAsync("http://localhost:5112/api/user/logIn", loginRequest);
-        User? loggedIn = null;
+
         if (response.IsSuccessStatusCode)
         {
-            loggedIn = await response.Content.ReadFromJsonAsync<User>();
+            var loggedIn = await response.Content.ReadFromJsonAsync<User>();
+
             if (loggedIn != null)
             {
                 await sessionStorage.SetItemAsync("user", loggedIn);
-                Console.WriteLine($"logged in as {loggedIn.Username}");
                 navManager.NavigateTo("/", true);
             }
             else
             {
-                errorText = "Login failed: Invalid user data returned.";
+                errorText = "Login mislykkedes. Forkert data modtaget.";
             }
         }
-        
+        else
+        {
+            errorText = "Forkert brugernavn eller adgangskode.";
+        }
     }
 
-    public void Hjem()
+    private void Hjem()
     {
         navManager.NavigateTo("/");
     }

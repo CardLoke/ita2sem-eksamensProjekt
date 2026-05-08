@@ -47,9 +47,11 @@
 
                     @if (loggedIn != null && s.Owner == loggedIn.Username)
                     {
+                        <div class="delete-container">
                         <button class="delete-btn" @onclick="() => Modal(s.Id)">
                             Delete Studio
                         </button>
+                        </div>
                     }
                 </div>
             </div>

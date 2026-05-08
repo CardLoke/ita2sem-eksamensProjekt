@@ -4,58 +4,99 @@
 @inject NavigationManager navigationManager;
 @using Blazored.SessionStorage;
 @inject ISessionStorageService sessionStorage;
-<h3>AddStudio</h3>
 
-<div class="newStudio-container">
-    <p>What is the name of your studio?</p>
-    <InputText @bind-Value="aNewStudio.StudioName"
-               class="form-control mb-2"
-               placeholder="Enter studio name"/>
-    <p>How many people does your studio fit?</p>
-    <InputNumber @bind-Value="aNewStudio.StudioSize"
-                 class="form-control mb-2"
-                 placeholder="Enter studio size"/>
-    <p>Enter a description of your studio for potential customers to read!</p>
-    <InputText @bind-Value="aNewStudio.StudioDescription"
-               class="form-control mb-2"
-               placeholder="Enter a description"/>
-    <p>Is there any extra equipment you would like to rent?</p>
-    <InputText @bind-Value="aNewStudio.StudioEquipment"
-               class="form-control mb-2"
-               placeholder="What equipment would you like to add?"/>
-    <p>How much would you like it to cost pr. hour?</p>
-    <InputNumber @bind-Value="aNewStudio.StudioPrice"
-                 class="form-control mb-2"
-                 placeholder="Enter an hourly rate"/>
-    <p>What is the address?</p>
-    <InputText @bind-Value="aNewStudio.StudioAddress"
-               class="form-control mb-2"
-               placeholder="Enter address"/>
+@using Core.Model;
+
+<PageTitle>Add New Studio - Session Sync</PageTitle>
+
+<div class="add-studio-page">
+    <div class="page-header">
+        <h1>Add Your Studio</h1>
+        <p>Share your studio with musicians and producers</p>
+    </div>
+
+    <div class="form-container">
+        <div class="studio-form">
+
+            <div class="form-group">
+                <label>Studio Name</label>
+                <InputText @bind-Value="aNewStudio.StudioName"
+                           class="form-input"
+                           placeholder="e.g. Neon Sound Studio" />
+            </div>
+
+            <div class="form-group">
+                <label>Studio Size (Max people)</label>
+                <InputNumber @bind-Value="aNewStudio.StudioSize"
+                             class="form-input"
+                             placeholder="How many people can fit?" />
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <InputTextArea @bind-Value="aNewStudio.StudioDescription"
+                               class="form-input textarea"
+                               placeholder="Describe your studio, atmosphere, vibe, etc..."
+                               rows="4" />
+            </div>
+
+            <div class="form-group">
+                <label>Equipment</label>
+                <InputText @bind-Value="aNewStudio.StudioEquipment"
+                           class="form-input"
+                           placeholder="e.g. Neumann microphones, Yamaha monitors, UAD interfaces..." />
+            </div>
+
+            <div class="form-group">
+                <label>Hourly Price (kr)</label>
+                <InputNumber @bind-Value="aNewStudio.StudioPrice"
+                             class="form-input"
+                             placeholder="e.g. 450" />
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <InputText @bind-Value="aNewStudio.StudioAddress"
+                           class="form-input"
+                           placeholder="Full address of the studio" />
+            </div>
+
+            <button class="submit-btn" @onclick="OnClickRegisterStudio">
+                Register Studio
+            </button>
+        </div>
+    </div>
 </div>
 
-<button @onclick="OnClickRegisterStudio">Register your studio!</button>
-
 @code {
-
     private Studio aNewStudio = new Studio();
-
-
     User? loggedIn;
+
     protected async override Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
         if (loggedIn == null)
         {
-            navigationManager.NavigateTo("/Home");
+            navigationManager.NavigateTo("/");
         }
     }
 
     private async Task OnClickRegisterStudio()
     {
-        aNewStudio.Id = Random.Shared.Next();
-        aNewStudio.Owner = loggedIn.Username;
-        await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
-        aNewStudio = new();
+        if (string.IsNullOrWhiteSpace(aNewStudio.StudioName))
+        {
+            // You can add better validation later
+            return;
+        }
+
+        aNewStudio.Owner = loggedIn?.Username;
+        aNewStudio.Id = Random.Shared.Next(); // Better to let backend generate ID
+
+        var response = await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
+
+        if (response.IsSuccessStatusCode)
+        {
+            navigationManager.NavigateTo("/"); // Go back to home after success
+        }
     }
-    
 }
