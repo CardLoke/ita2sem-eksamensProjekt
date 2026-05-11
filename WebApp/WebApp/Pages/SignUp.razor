@@ -3,47 +3,83 @@
 @using Core.Model
 @using Blazored.SessionStorage
 @inject NavigationManager navigationManager;
+@using WebApp.Components;
 
 <h3>SignUp</h3>
 <button @onclick="Hjem">Hjem</button>
 
 <div class="signUp-container">
-<InputText @bind-Value="aNewUser.Username"
-           class="form-control mb-2"
-           placeholder="Enter username" />
+    <InputText @bind-Value="aNewUser.Username"
+               class="form-control mb-2"
+               placeholder="Enter username" />
 
-<InputText @bind-Value="aNewUser.Mail"
-           class="form-control mb-2"
-           placeholder="Enter Email" />
+    <InputText @bind-Value="aNewUser.Mail"
+               class="form-control mb-2"
+               placeholder="Enter Email" />
 
-<InputText @bind-Value="aNewUser.Password"
-           class="form-control mb-2"
-           placeholder="Enter password" />
+    <InputText @bind-Value="aNewUser.Password"
+               class="form-control mb-2"
+               placeholder="Enter password" />
 
-<select @bind="aNewUser.Role" class="form-control mb-2">
-    <option value="">Vælg Rolle</option>
-    <option value="Studieejer">Studieejer</option>
-    <option value="Studielejer">Studielejer</option>
-    <option value="Producer">Producer</option>
-</select>
-
+    <select @bind="aNewUser.Role" class="form-control mb-2">
+        <option value="">Vælg Rolle</option>
+        <option value="Studieejer">Studieejer</option>
+        <option value="Studielejer">Studielejer</option>
+        <option value="Producer">Producer</option>
+    </select>
 </div>
 
 <button class="btn btn-primary" @onclick="OnClickOpret">Opret bruger</button>
 
+<ModalDialog @ref="signUp" Title="Confirm Deletion">
+    @message
+    <button @onclick=" toLogin">Okay</button>
+</ModalDialog>
+
 @code {
+
+    ModalDialog? signUp;
+
     private User aNewUser = new User();
+    string message = "";
 
     private async Task OnClickOpret()
     {
         aNewUser.Id = Random.Shared.Next();
-        await http.PostAsJsonAsync("http://localhost:5112/api/user/signUp", aNewUser);
-        aNewUser = new();
-    }
 
+
+        var result = await http.PostAsJsonAsync("http://localhost:5112/api/user/signUp", aNewUser);
+
+
+        aNewUser = new();
+
+
+        if (result.Content != null)
+        {
+            message = await result.Content.ReadAsStringAsync();
+            signUp.Open();
+        }
+        else
+        {
+            message = string.Empty;
+        }
+
+    }
 
     public void Hjem()
     {
         navigationManager.NavigateTo("/");
     }
-}
+    public void toLogin()
+    {
+        if (message == "Sign Up was succesfull!")
+        {
+            signUp.Close();
+            navigationManager.NavigateTo("login");
+        }
+        else
+        {
+            signUp.Close();
+        }
+    }
+    }

@@ -7,5 +7,6 @@ namespace ServerApi.Interfaces
         void SignUp(User user);
         Task<User?> LogIn(LoginRequest loginRequest);
         Task Edit(User user);
+        Task<User?> SignUpValidation(string username, string mail);
     }
 }

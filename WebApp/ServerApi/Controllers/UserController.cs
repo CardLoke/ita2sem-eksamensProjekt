@@ -15,9 +15,21 @@ public class UserController : ControllerBase
     }
     [HttpPost]
     [Route("signUp")]
-    public void SignUp(User user)
+    public string SignUp(User user)
     {
-        userRepo.SignUp(user);
+        var result=userRepo.SignUpValidation(user.Username, user.Mail);
+        if (result is null)
+        {
+            userRepo.SignUp(user);
+            Console.WriteLine("succes");
+            return "Sign Up was succesfull!";
+        }
+        else
+        {
+            Console.WriteLine("Fail");
+            return "Username or Email already exists!";
+        }
+
     }
     [HttpPost]
     [Route("logIn")]
