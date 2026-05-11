@@ -17,6 +17,9 @@ namespace ServerApi.Repositories
 
         }
         public void SignUp(User user) {
+
+            user.Username = user.Username.Trim().ToLower();
+            user.Mail = user.Mail.Trim().ToLower();
             _Users.InsertOne(user);
         }
         public async Task<User?> LogIn(LoginRequest loginRequest)
@@ -29,18 +32,17 @@ namespace ServerApi.Repositories
         {
             await _Users.ReplaceOneAsync(u => u.Id == user.Id, user);
         }
-        public async Task <User?> SignUpValidation(string username, string mail)
+        public async Task<User?> SignUpValidation(string username, string mail)
         {
             var normUsername = username.Trim().ToLower();
             var normMail = mail.Trim().ToLower();
             var filter = Builders<User>.Filter.Or(
                 Builders<User>.Filter.Eq(x => x.Username, normUsername),
                 Builders<User>.Filter.Eq(x => x.Mail, normMail)
-                );
+            );
             var existingUser = await _Users.Find(filter).FirstOrDefaultAsync();
-            Console.WriteLine("Database");
+            Console.WriteLine(existingUser);
             return existingUser;
-
         }
     }
 }

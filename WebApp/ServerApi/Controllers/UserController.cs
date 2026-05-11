@@ -9,42 +9,43 @@ namespace ServerApi.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUser userRepo;
+
     public UserController(IUser _repo)
     {
         userRepo = _repo;
     }
+
     [HttpPost]
     [Route("signUp")]
-    public string SignUp(User user)
+    public async Task<IActionResult> SignUp(User user)   // ← Changed to async Task<IActionResult>
     {
-        var result=userRepo.SignUpValidation(user.Username, user.Mail);
-        if (result is null)
+        // Await the validation
+        var existingUser = await userRepo.SignUpValidation(user.Username, user.Mail);
+
+        if (existingUser == null)
         {
-            userRepo.SignUp(user);
-            Console.WriteLine("succes");
-            return "Sign Up was succesfull!";
+            userRepo.SignUp(user);           // Note: This is synchronous (InsertOne)
+            Console.WriteLine("Success - User created");
+            return Ok("Sign Up was successful!");
         }
         else
         {
-            Console.WriteLine("Fail");
-            return "Username or Email already exists!";
+            Console.WriteLine("Failed - User already exists");
+            return Conflict("Username or Email already exists!");  // Better status code (409)
         }
-
     }
+
     [HttpPost]
     [Route("logIn")]
     public async Task<User?> LogIn(LoginRequest loginRequest)
     {
-        Console.WriteLine("hej");
-        User? loggedIn = await userRepo.LogIn(loginRequest);
-        return loggedIn;
+        return await userRepo.LogIn(loginRequest);
     }
-    
+
     [HttpPut]
     [Route("edit")]
     public async Task Edit(User user)
     {
         await userRepo.Edit(user);
     }
-    
 }
