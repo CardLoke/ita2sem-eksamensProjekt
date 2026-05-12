@@ -8,85 +8,85 @@
 @using System.Threading.Tasks
 @using WebApp.Components;
 
+<div class="page">
+    <PageTitle>Session Sync - Music Studios</PageTitle>
 
-<PageTitle>Session Sync - Music Studios</PageTitle>
+    <h1 class="page-title">Find Your Perfect Studio</h1>
+    <p class="subtitle">Professional recording studios available for booking</p>
 
-<h1 class="page-title">Find Your Perfect Studio</h1>
-<p class="subtitle">Professional recording studios available for booking</p>
-
-<div class="studios-grid">
-    @if (studios == null || !studios.Any())
-    {
-        <p>No studios available at the moment.</p>
-    }
-    else
-    {
-        @foreach (var s in studios)
+    <div class="studios-grid">
+        @if (studios == null || !studios.Any())
         {
-            <div class="studio-card">
-                <div class="studio-image">
-                    <!-- Placeholder image - replace with real image later -->
-                    <img src="https://www.sunsetsound.com/wp-content/uploads/2021/04/studio-1-4.jpg" alt="@s.StudioName" />
-                </div>
-
-                <div class="studio-content">
-                    <h3>@s.StudioName</h3>
-                    <p class="description">@s.StudioDescription</p>
-
-                    <div class="studio-info">
-                        <p><strong>Equipment:</strong> @s.StudioEquipment</p>
-                        <p><strong>Size:</strong> @s.StudioSize</p>
-                        <p><strong>Address:</strong> @s.StudioAddress</p>
-                    </div>
-
-                    <div class="price">
-                        @s.StudioPrice <span class="price-unit">kr / hour</span>
-                    </div>
-
-                    <div class="owner">Owned by <strong>@s.Owner</strong></div>
-
-                    @if (loggedIn != null && s.Owner == loggedIn.Username)
-                    {
-                        <div class="delete-container">
-                        <button class="delete-btn" @onclick="() => Modal(s.Id)">
-                            Delete Studio
-                        </button>
-                        </div>
-                    }
-                    @if(loggedIn != null && s.Owner != loggedIn.Username)
-                    {
-                        <div class="book-container">
-                            <button class="book-btn" @onclick="() => OpenBookingModal(s)">
-                                Book Studio
-                            </button>
-                        </div>
-                    }
-                </div>
-            </div>
+            <p>No studios available at the moment.</p>
         }
-    }
-</div>
+        else
+        {
+            @foreach (var s in studios)
+            {
+                <div class="studio-card">
+                    <div class="studio-image">
+                        <!-- Placeholder image - replace with real image later -->
+                        <img src="https://www.sunsetsound.com/wp-content/uploads/2021/04/studio-1-4.jpg" alt="@s.StudioName" />
+                    </div>
 
-@if (loggedIn != null)
-{
-    <div class="add-studio-container">
-        <button class="add-studio-btn" @onclick="AddStu">
-            + Add New Studio
-        </button>
+                    <div class="studio-content">
+                        <h3>@s.StudioName</h3>
+                        <p class="description">@s.StudioDescription</p>
+
+                        <div class="studio-info">
+                            <p><strong>Equipment:</strong> @s.StudioEquipment</p>
+                            <p><strong>Size:</strong> @s.StudioSize</p>
+                            <p><strong>Address:</strong> @s.StudioAddress</p>
+                        </div>
+
+                        <div class="price">
+                            @s.StudioPrice <span class="price-unit">kr / hour</span>
+                        </div>
+
+                        <div class="owner">Owned by <strong>@s.Owner</strong></div>
+
+                        @if (loggedIn != null && s.Owner == loggedIn.Username)
+                        {
+                            <div class="delete-container">
+                                <button class="delete-btn" @onclick="() => Modal(s.Id)">
+                                    Delete Studio
+                                </button>
+                            </div>
+                        }
+                        @if(loggedIn != null && s.Owner != loggedIn.Username)
+                        {
+                            <div class="book-container">
+                                <button class="book-btn" @onclick="() => OpenBookingModal(s)">
+                                    Book Studio
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
     </div>
-}
 
-<ModalDialog @ref="delete" Title="Confirm Deletion">
-    Are you sure you want to delete this studio?
-    <button class="btn btn-danger" @onclick="Delete">Yes, Delete</button>
-    <button class="btn btn-secondary" @onclick="delete.Close">Cancel</button>
-</ModalDialog>
-<ModalBooking 
-    IsOpen="@showBookingModal"
-    IsOpenChanged="@((value) => showBookingModal = value)"
-    Studio="@selectedStudio"
-    OnBookingConfirmed="HandleBooking" />
+    @if (loggedIn != null)
+    {
+        <div class="add-studio-container">
+            <button class="add-studio-btn" @onclick="AddStu">
+                + Add New Studio
+            </button>
+        </div>
+    }
 
+    <ModalDialog @ref="delete" Title="Confirm Deletion">
+        Are you sure you want to delete this studio?
+        <button class="btn btn-danger" @onclick="Delete">Yes, Delete</button>
+        <button class="btn btn-secondary" @onclick="delete.Close">Cancel</button>
+    </ModalDialog>
+    <ModalBooking 
+        IsOpen="@showBookingModal"
+        IsOpenChanged="@((value) => showBookingModal = value)"
+        Studio="@selectedStudio"
+        OnBookingConfirmed="HandleBooking" />
+</div>
 @code
 {
     ModalDialog? delete;

@@ -4,17 +4,13 @@
 @inject ISessionStorageService sessionStorage;
 @using Core.Model;
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
         <div class="top-row px-4">
             @if (loggedIn != null)
             {
                 <a>Logged in as @loggedIn.Username</a>
-                <button @onclick="LogOut">Log out</button>
-                <button @onclick="Edit">Edit Profile</button>
+                <button id="logOut" @onclick="LogOut">Log out</button>
+                <button id="edit" @onclick="Edit">Edit Profile</button>
             }
             else
             {
