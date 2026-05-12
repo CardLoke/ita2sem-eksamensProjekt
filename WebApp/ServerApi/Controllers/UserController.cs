@@ -17,21 +17,21 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("signUp")]
-    public async Task<IActionResult> SignUp(User user)   // ← Changed to async Task<IActionResult>
+    public async Task<IActionResult> SignUp(User user)   
     {
-        // Await the validation
+       
         var existingUser = await userRepo.SignUpValidation(user.Username, user.Mail);
 
         if (existingUser == null)
         {
-            userRepo.SignUp(user);           // Note: This is synchronous (InsertOne)
-            Console.WriteLine("Success - User created");
+            userRepo.SignUp(user);           
+            
             return Ok("Sign Up was successful!");
         }
         else
         {
-            Console.WriteLine("Failed - User already exists");
-            return Conflict("Username or Email already exists!");  // Better status code (409)
+            
+            return Conflict("Username or Email already exists!");  
         }
     }
 

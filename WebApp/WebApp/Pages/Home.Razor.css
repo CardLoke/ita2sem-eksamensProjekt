@@ -26,6 +26,10 @@
     transition: all 0.3s ease;
     border: 1px solid #333;
     height:100%;
+
+    /* Make the card a column flex container so we can pin the action area to the bottom */
+    display: flex;
+    flex-direction: column;
 }
 
     .studio-card:hover {
@@ -42,6 +46,8 @@
 .studio-content {
     padding: 20px;
     color: #e0e0e0;
+
+    /* content should grow and allow actions to be pushed to the bottom */
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -87,27 +93,73 @@
     font-size: 0.95rem;
     margin-bottom: 16px;
 }
-.delete-container {
-    margin-top: auto; 
+
+/* Ensure action containers are pushed to the bottom of the card */
+.delete-container,
+.book-container {
+    margin-top: auto;
     padding-top: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.delete-btn {
+/* If both buttons are wrapped together in an .actions element, present them side-by-side */
+/* Use CSS Grid to guarantee equal-width columns and full width usage */
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two equal columns when two buttons exist */
+    gap: 12px;
     width: 100%;
-    padding: 10px;
-    background-color: #b91c1c;
-    color: white;
-    border: none;
+    align-items: stretch;
+}
+
+/* Responsive: stack buttons on narrow viewports */
+@media (max-width: 520px) {
+    .actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Make buttons occupy equal space and align baseline at the bottom */
+/* Increase horizontal padding and ensure they fill the grid cell */
+.book-btn,
+.delete-btn {
+    /* keep flex fallback for contexts that may rely on it */
+    flex: 1 1 0;
+    min-width: 0; /* prevents overflow in flex children */
+    padding: 14px 18px; /* increased horizontal padding for visual width */
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    /* ensure buttons fill their grid/flex cell */
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+/* Book button visual */
+.book-btn {
+    background: linear-gradient(135deg, #00ffcc, #00b894);
+    color: black;
+}
+
+/* Delete button visual */
+.delete-btn {
+    background-color: #b91c1c;
+    color: white;
 }
 
     .delete-btn:hover {
         background-color: #991b1b;
     }
 
+/* Add-studio button styles unchanged */
 .add-studio-container {
     text-align: center;
     margin-top: 50px;

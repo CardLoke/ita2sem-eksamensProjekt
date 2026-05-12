@@ -10,5 +10,6 @@ public class Studio
     public string StudioDescription { get; set; } = "";
     public int Id { get; set; }
     public string Owner { get; set; } = "";
+    public int Capacity { get; set; }
     
 }

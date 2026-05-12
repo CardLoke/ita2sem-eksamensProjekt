@@ -41,7 +41,7 @@ namespace ServerApi.Repositories
                 Builders<User>.Filter.Eq(x => x.Mail, normMail)
             );
             var existingUser = await _Users.Find(filter).FirstOrDefaultAsync();
-            Console.WriteLine(existingUser);
+            
             return existingUser;
         }
     }

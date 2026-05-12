@@ -1,0 +1,132 @@
+﻿@inject IJSRuntime JS
+@using Core.Model;
+
+<div class="modal-backdrop" style="display: @(IsOpen ? "flex" : "none")">
+    <div class="modal-content">
+        <!-- Header -->
+        <div class="modal-header">
+            <h2>Book Studio</h2>
+            <h3>@Studio?.StudioName</h3>
+            <button class="close-btn" @onclick="OnClose">✕</button>
+        </div>
+
+        <EditForm Model="BookingData" OnValidSubmit="HandleSubmit" class="modal-body">
+            <DataAnnotationsValidator />
+
+            <!-- Studio Info -->
+            <div class="studio-info">
+                <p><strong>Location:</strong> @Studio?.StudioAddress</p>
+                <p><strong>Hourly Rate:</strong> $@Studio?.StudioPrice /hr</p>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+                <label>Date</label>
+                <InputDate @bind-Value="BookingData.Date" class="form-control" required />
+            </div>
+
+            <!-- Time -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Start Time</label>
+                    <InputText type="time" @bind-Value="BookingData.StartTime" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label>End Time</label>
+                    <InputText type="time" @bind-Value="BookingData.EndTime" class="form-control" required />
+                </div>
+            </div>
+
+            <!-- Attendees -->
+            <div class="form-group">
+                <label>Number of Attendees (Max @Studio?.Capacity)</label>
+                <InputNumber @bind-Value="BookingData.Attendees"
+                             min="1"
+                             max="@Studio?.Capacity"
+                             class="form-control" />
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+                <label>Additional Notes</label>
+                <InputTextArea @bind-Value="BookingData.Notes"
+                               rows="4"
+                               class="form-control"
+                               placeholder="Any special requirements..." />
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="OnClose">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" disabled="@IsLoading">
+                    @if (IsLoading)
+                    {
+                        <span>Processing...</span>
+                    }
+                    else
+                    {
+                        <span>Confirm Booking</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+    [Parameter] public Studio? Studio { get; set; }
+    [Parameter] public EventCallback<BookingData> OnBookingConfirmed { get; set; }
+    
+
+    private BookingData BookingData { get; set; } = new();
+    private bool IsLoading { get; set; } = false;
+
+    protected override void OnParametersSet()
+    {
+        if (IsOpen && Studio != null)
+        {
+            BookingData = new BookingData
+            {
+                StudioId = Studio.Id.ToString(),
+                Attendees = 1
+            };
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Studio == null) return;
+
+        IsLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            await OnBookingConfirmed.InvokeAsync(BookingData);
+            await OnClose();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Booking error: {ex.Message}");
+            // You can add toast notification here
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnClose()
+    {
+        await IsOpenChanged.InvokeAsync(false);
+    }
+
+    // CSS Styling (you can move this to a .css file)
+    private string ModalStyle => IsOpen ? "display: flex;" : "display: none;";
+}
