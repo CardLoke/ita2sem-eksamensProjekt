@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSingleton<IUser, UserRepositoryMongoDB>();
 builder.Services.AddSingleton<IStudio, StudioRepositoryMongoDB>();
-
+builder.Services.AddSingleton<IBooking, BookingRepositoryMongoDB>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("policy",

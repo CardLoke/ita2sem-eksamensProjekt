@@ -41,8 +41,7 @@
             <div class="form-group">
                 <label>Number of Attendees (Max @Studio?.Capacity)</label>
                 <InputNumber @bind-Value="BookingData.Attendees"
-                             min="1"
-                             max="@Studio?.Capacity"
+                             
                              class="form-control" />
             </div>
 
@@ -92,7 +91,7 @@
         {
             BookingData = new BookingData
             {
-                StudioId = Studio.Id.ToString(),
+                StudioId = Studio.Id,
                 Attendees = 1
             };
         }
