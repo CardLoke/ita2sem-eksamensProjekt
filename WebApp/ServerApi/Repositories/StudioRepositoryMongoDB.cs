@@ -31,5 +31,9 @@ namespace ServerApi.Repositories
             _studios.DeleteOne(item => item.Id == id);
         }
         
+        public async Task Edit(Studio studio)
+        {
+            await _studios.ReplaceOneAsync(s => s.Id == studio.Id, studio);
+        }
     }
 }

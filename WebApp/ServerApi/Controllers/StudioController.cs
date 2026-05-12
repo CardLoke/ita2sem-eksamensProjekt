@@ -36,5 +36,11 @@ public class StudioController : ControllerBase
     {
         studioRepo.Delete(id);
     }
-    
+
+    [HttpPut]
+    [Route("edit")]
+    public async Task Edit(Studio studio)
+    {
+        await studioRepo.Edit(studio);
+    }
 }

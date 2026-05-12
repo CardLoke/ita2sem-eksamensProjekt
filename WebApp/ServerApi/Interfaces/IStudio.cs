@@ -7,6 +7,7 @@ namespace ServerApi.Interfaces
         void RegisterStudio(Studio studio);
         List<Studio> GetAll();
         void Delete(int id);
+        Task Edit(Studio studio);
     }
     
 }

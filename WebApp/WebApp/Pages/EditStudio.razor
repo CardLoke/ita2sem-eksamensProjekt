@@ -1,0 +1,73 @@
+@page "/editStudio"
+@using Core.Model
+@using Blazored.SessionStorage
+@inject ISessionStorageService sessionStorage
+@inject HttpClient httpClient
+
+<h3>Edit Studio</h3>
+
+<p>Her skal studieejeren kunne redigere sit opslag.</p>
+
+@if (studio != null)
+{
+    <p> Studio Navn:</p>
+    
+    <input @bind ="studio.StudioName"/>
+    
+    <p> Beskrivelse:</p>
+    <input @bind ="studio.StudioDescription" />
+   
+    <p> Udstyr: </p>
+    <input @bind ="studio.StudioEquipment" />
+    
+    <p> Adresse:</p>
+    <input @bind ="studio.StudioAddress" />
+    
+    <p> Pris: </p>
+    <input @bind ="studio.StudioPrice" />
+    
+    <p> Størrelse: </p>
+    <input @bind ="studio.StudioSize" />
+    
+    <button onClick="Save">Save</button>
+    <p> @message</p>
+}
+
+@code
+{
+    User? user;
+    Studio? studio;
+    string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await sessionStorage.GetItemAsync<User?>("user");
+        var studios = await httpClient.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio");
+
+        if (studios != null)
+        {
+            foreach (Studio currentStudio in studios)
+            {
+                if (currentStudio.Owner == user?.Username)
+                {
+                    studio = currentStudio;
+                }
+            }
+        }
+    }
+
+
+    public async Task Save()
+    {
+        var response = await httpClient.PutAsJsonAsync("http://localhost:5112/api/studio/edit", studio);
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Studie Gemt";
+        }
+        else
+        {
+            message = "Fejl ved gem";
+        }
+    }
+    
+}
