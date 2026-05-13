@@ -79,13 +79,13 @@
                                     <p><strong>Notes:</strong> @request.Notes</p>
                                 }
                             </div>
-                            @if (request.Status == "Pending")
-                            {
+                            
+                            
                                 <div class="card-actions">
-                                    <button class="btn accept-btn"> <!-- @onclick='() => UpdateStatus(request.Id, "Accepted")' --> Accept</button>
-                                    <button class="btn reject-btn"> <!-- @onclick='() => UpdateStatus(request.Id, "Rejected")'--> Reject</button>
+                                    <button class="btn accept-btn" @onclick='() => UpdateStatus(request.Id, "Accepted")' > Accept</button>
+                                    <button class="btn reject-btn"  @onclick='() => UpdateStatus(request.Id, "Rejected")'> Reject</button>
                                 </div>
-                            }
+                            
                         </div>
                     }
                 }
@@ -98,16 +98,16 @@
     private User? loggedIn;
     private List<BookingData>? myRequests;
     private List<BookingData>? myStudioRequests;
-  
+
 
     protected override async Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
-        
+
 
         if (loggedIn != null)
         {
-            
+
             await LoadRequests();
         }
     }
@@ -125,8 +125,9 @@
 
     private async Task UpdateStatus(int bookingId, string newStatus)
     {
-        // Call your API to update status
+        
+        Console.WriteLine("hej");
         await http.PutAsJsonAsync($"http://localhost:5112/api/booking/status/{bookingId}", newStatus);
-        await LoadRequests(); // Refresh list
+        await LoadRequests(); 
     }
 }

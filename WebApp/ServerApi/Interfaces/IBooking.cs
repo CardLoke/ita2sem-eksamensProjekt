@@ -7,5 +7,6 @@ namespace ServerApi.Interfaces
         void Booking(BookingData data);
         Task<List<BookingData>> GetRequests(User user);
         Task<List<BookingData>> GetStudioRequests(User user);
+        void Status(int id, string status);
     }
 }

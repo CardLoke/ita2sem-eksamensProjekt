@@ -38,5 +38,12 @@ public class BookingController : ControllerBase
         return await bookingRepo.GetStudioRequests(user);
         
     }
+    [HttpPut]
+    [Route("status/{id:int}")]
+    public void Status(int id, [FromBody] string status)
+    {
+        Console.WriteLine("Controller");
+        bookingRepo.Status(id, status);
+    }
 }
 

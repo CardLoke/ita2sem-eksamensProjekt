@@ -48,6 +48,16 @@ main {
     transition: 0.3s;
     margin-left: 8px;
 }
+#loggedInAs {
+    float: left;
+    color: #00ffcc;
+    background-color: #1e1e2e;
+    border-bottom: 1px solid #00ffcc;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
 
 #signUp:hover, #logIn:hover {
     background-color: #00ffcc;

@@ -28,5 +28,12 @@ namespace ServerApi.Repositories
         {
             return await _bookings.Find(item => item.StudioOwner == user.Username).ToListAsync();
         }
+        public void Status(int id, string status)
+        {
+            Console.WriteLine("Repo");
+            var filter = Builders<BookingData>.Filter.Eq(item => item.Id, id);
+            var update = Builders<BookingData>.Update.Set(item => item.Status, status);
+            _bookings.UpdateOne(filter, update);
+        }
     }
 }
