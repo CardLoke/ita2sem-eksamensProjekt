@@ -1,0 +1,16 @@
+#opretBtn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 1px solid #00ffcc;
+    background-color: transparent;
+    color: #00ffcc;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 8px;
+}
+
+.signup-page {
+    min-height: 100vh;
+    background-color: #13131f;
+}

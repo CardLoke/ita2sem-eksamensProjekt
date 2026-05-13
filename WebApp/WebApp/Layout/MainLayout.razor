@@ -6,6 +6,7 @@
 <div class="page">
     <main>
         <div class="top-row px-4">
+            <button id="mainPageBtn" @onclick="goToMainPage">Go to studios</button>
             @if (loggedIn != null)
             {
                 <a>Logged in as @loggedIn.Username</a>
@@ -14,12 +15,10 @@
             }
             else
             {
-                    <button id="signUp" @onclick="SignUp">Sign Up</button>
-                    <button id="logIn" @onclick="LogIn">Log In</button>
+                <button id="signUp" @onclick="SignUp">Sign Up</button>
+                <button id="logIn" @onclick="LogIn">Log In</button>
             }
-            
         </div>
-
         <article class="content px-4">
             @Body
         </article>
@@ -46,8 +45,11 @@
     {
         navigationManager.NavigateTo("editProfile");
     }
-    
-    
+
+    public void goToMainPage()
+    {
+        navigationManager.NavigateTo("/");
+    }
     User? loggedIn;
     protected async override Task OnInitializedAsync()
     {
