@@ -12,4 +12,9 @@ public class BookingData
     public int Attendees { get; set; } = 1;
     public string? Notes { get; set; }
     public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public string StudioOwner { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string StudioName { get; set; } = "";
+    public string StudioAddress { get; set; } = "";
 }

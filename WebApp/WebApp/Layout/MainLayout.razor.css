@@ -37,7 +37,7 @@ main {
         text-overflow: ellipsis;
     }
 
-#signUp, #logIn, #logOut, #edit, #mainPageBtn {
+#signUp, #logIn, #logOut, #edit, #mainPageBtn, #inbox {
     padding: 8px 20px;
     border-radius: 50px;
     border: 1px solid #00ffcc;

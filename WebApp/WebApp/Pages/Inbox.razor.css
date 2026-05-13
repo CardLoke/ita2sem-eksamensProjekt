@@ -1,0 +1,166 @@
+﻿/* Inbox.razor.css */
+
+.page {
+    background-color: #13131f;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #00ffcc;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+
+.inbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.inbox-section {
+    width: 100%;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: #00ffcc;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #00ffcc33;
+}
+
+.requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+}
+
+.booking-card {
+    background-color: #1e1e2e;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+    .booking-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+.card-header {
+    padding: 18px 24px;
+    background-color: #25253a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #ffffff;
+    }
+
+.status {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+    .status.pending {
+        background: #f59e0b;
+        color: black;
+    }
+
+    .status.accepted {
+        background: #10b981;
+        color: white;
+    }
+
+    .status.rejected {
+        background: #ef4444;
+        color: white;
+    }
+
+.card-body {
+    padding: 24px;
+    color: #e2e8f0;
+    line-height: 1.6;
+}
+
+    .card-body p {
+        margin: 10px 0;
+    }
+
+    .card-body strong {
+        color: #00ffcc;
+    }
+
+.card-actions {
+    padding: 16px 24px;
+    background-color: #25253a;
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.accept-btn {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: black;
+}
+
+.reject-btn {
+    background: #7f1d1d;
+    color: white;
+}
+
+.accept-btn:hover {
+    background: #34d399;
+}
+
+.reject-btn:hover {
+    background: #b91c1c;
+}
+
+.no-data {
+    color: #94a3b8;
+    font-style: italic;
+    padding: 40px;
+    text-align: center;
+    background-color: #1e1e2e;
+    border-radius: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .requests-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page {
+        padding: 20px 10px;
+    }
+}

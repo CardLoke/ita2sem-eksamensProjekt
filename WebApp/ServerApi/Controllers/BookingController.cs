@@ -24,5 +24,19 @@ public class BookingController : ControllerBase
     {
         bookingRepo.Booking(data);
     }
+    [HttpPost]
+    [Route("requests")]
+    public async Task<List<BookingData>> Requests(User user) 
+    {
+        return await bookingRepo.GetRequests(user);
+        
+    }
+    [HttpPost]
+    [Route("studioRequests")]
+    public async Task<List<BookingData>> StudioRequests(User user)
+    {
+        return await bookingRepo.GetStudioRequests(user);
+        
+    }
 }
 

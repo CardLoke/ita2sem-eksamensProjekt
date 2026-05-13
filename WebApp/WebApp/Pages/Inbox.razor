@@ -1,0 +1,132 @@
+﻿@using System.Net
+@using Core.Model;
+@inject NavigationManager navigationManager;
+@using Blazored.SessionStorage;
+@inject ISessionStorageService sessionStorage;
+@inject HttpClient http
+@using System.Threading.Tasks
+@using WebApp.Components;
+@page "/inbox"
+
+
+<div class="page">
+    <PageTitle>Session Sync - Inbox</PageTitle>
+
+    <h1 class="page-title">Inbox</h1>
+    <p class="subtitle">Manage your studio booking requests</p>
+
+    <div class="inbox-container">
+
+        <!-- Your Requests -->
+        <section class="inbox-section">
+            <h2 class="section-title">Your Requests</h2>
+            <div class="requests-grid">
+                @if (myRequests == null || !myRequests.Any())
+                {
+                    <p class="no-data">You haven't made any booking requests yet.</p>
+                }
+                else
+                {
+                    @foreach (var request in myRequests)
+                    {
+                        <div class="booking-card @request.Status.ToLower()">
+                            <div class="card-header">
+                                <h3>@request.StudioName</h3>
+                                <span class="status @request.Status.ToLower()">@request.Status</span>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Owner:</strong> @request.StudioOwner</p>
+                                <p><strong>Address:</strong> @request.StudioAddress</p>
+                                <p><strong>Date:</strong> @request.Date.ToShortDateString()</p>
+                                <p><strong>Time:</strong> @request.StartTime - @request.EndTime</p>
+                                <p><strong>Attendees:</strong> @request.Attendees</p>
+                                @if (!string.IsNullOrEmpty(request.Notes))
+                                {
+                                    <p><strong>Notes:</strong> @request.Notes</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+
+        <!-- Your Studios' Requests -->
+        <section class="inbox-section">
+            <h2 class="section-title">Your Studios' Requests</h2>
+            <div class="requests-grid">
+                @if (myStudioRequests == null || !myStudioRequests.Any())
+                {
+                    <p class="no-data">No one has requested to book your studios yet.</p>
+                }
+                else
+                {
+                    @foreach (var request in myStudioRequests)
+                    {
+                        <div class="booking-card @request.Status.ToLower()">
+                            <div class="card-header">
+                                <h3>@request.StudioName</h3>
+                                <span class="status @request.Status.ToLower()">@request.Status</span>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Request from:</strong> @request.Name</p>
+                                <p><strong>Address:</strong> @request.StudioAddress</p>
+                                <p><strong>Date:</strong> @request.Date.ToShortDateString()</p>
+                                <p><strong>Time:</strong> @request.StartTime - @request.EndTime</p>
+                                <p><strong>Attendees:</strong> @request.Attendees</p>
+                                @if (!string.IsNullOrEmpty(request.Notes))
+                                {
+                                    <p><strong>Notes:</strong> @request.Notes</p>
+                                }
+                            </div>
+                            @if (request.Status == "Pending")
+                            {
+                                <div class="card-actions">
+                                    <button class="btn accept-btn"> <!-- @onclick='() => UpdateStatus(request.Id, "Accepted")' --> Accept</button>
+                                    <button class="btn reject-btn"> <!-- @onclick='() => UpdateStatus(request.Id, "Rejected")'--> Reject</button>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+    private User? loggedIn;
+    private List<BookingData>? myRequests;
+    private List<BookingData>? myStudioRequests;
+  
+
+    protected override async Task OnInitializedAsync()
+    {
+        loggedIn = await sessionStorage.GetItemAsync<User?>("user");
+        
+
+        if (loggedIn != null)
+        {
+            
+            await LoadRequests();
+        }
+    }
+
+    private async Task LoadRequests()
+    {
+        var requestResponse = await http.PostAsJsonAsync("http://localhost:5112/api/booking/requests", loggedIn);
+        var studioResponse = await http.PostAsJsonAsync("http://localhost:5112/api/booking/studioRequests", loggedIn);
+
+        myRequests = await requestResponse.Content.ReadFromJsonAsync<List<BookingData>>();
+        myStudioRequests = await studioResponse.Content.ReadFromJsonAsync<List<BookingData>>();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateStatus(int bookingId, string newStatus)
+    {
+        // Call your API to update status
+        await http.PutAsJsonAsync($"http://localhost:5112/api/booking/status/{bookingId}", newStatus);
+        await LoadRequests(); // Refresh list
+    }
+}

@@ -20,5 +20,13 @@ namespace ServerApi.Repositories
             Console.WriteLine(data.Id);
             _bookings.InsertOne(data);
         }
+        public async Task<List<BookingData>> GetRequests(User user)
+        {
+            return await _bookings.Find(item => item.Name == user.Username).ToListAsync();
+        }
+        public async Task<List<BookingData>> GetStudioRequests(User user)
+        {
+            return await _bookings.Find(item => item.StudioOwner == user.Username).ToListAsync();
+        }
     }
 }
