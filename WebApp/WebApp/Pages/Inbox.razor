@@ -44,6 +44,10 @@
                                 {
                                     <p><strong>Notes:</strong> @request.Notes</p>
                                 }
+                                @if(request.Status == "Rejected")
+                                {
+                                    <button class="btn delete-btn" @onclick="() => Modal(request.Id)">Delete</button>
+                                }
                             </div>
                         </div>
                     }
@@ -103,11 +107,18 @@
         </section>
     </div>
 </div>
+<ModalDialog @ref="delete" Title="Confirm Deletion">
+    Are you sure you want to delete your request?
+    <button class="btn btn-danger" @onclick="Delete">Yes, Delete</button>
+    <button class="btn btn-secondary" @onclick="delete.Close">Cancel</button>
+</ModalDialog>
 
 @code {
     private User? loggedIn;
     private List<BookingData>? myRequests;
     private List<BookingData>? myStudioRequests;
+    ModalDialog? delete;
+    int tempId;
 
 
     protected override async Task OnInitializedAsync()
@@ -135,9 +146,24 @@
 
     private async Task UpdateStatus(int bookingId, string newStatus)
     {
-        
+
         Console.WriteLine("hej");
         await http.PutAsJsonAsync($"http://localhost:5112/api/booking/status/{bookingId}", newStatus);
         await LoadRequests(); 
+    }
+    public async Task Delete()
+    {
+        var response = await http.DeleteAsync($"http://localhost:5112/api/booking/delete/{tempId}");
+        if (response.IsSuccessStatusCode)
+        {
+            delete?.Close();
+            await LoadRequests();
+
+        }
+    }
+    public void Modal(int id)
+    {
+        tempId = id;
+        delete?.Open();
     }
 }

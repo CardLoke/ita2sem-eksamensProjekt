@@ -5,11 +5,17 @@
 @using Core.Model;
 <div class="page">
     <main>
-        <div class="top-row px-4">
+        
+        @if(loggedIn != null)
+        {
+                <a id="loggedInAs">Logged in as: <strong> @loggedIn.Username</strong></a>
+        }
+            <div class="top-row px-4">
+        
             <button id="mainPageBtn" @onclick="goToMainPage">Go to studios</button>
             @if (loggedIn != null)
             {
-                <a>Logged in as @loggedIn.Username</a>
+              
                 <button id="logOut" @onclick="LogOut">Log out</button>
                 <button id="edit" @onclick="Edit">Edit Profile</button>
                 <button id="inbox" @onclick="Inbox">Inbox</button>

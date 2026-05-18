@@ -136,6 +136,14 @@
     background: #7f1d1d;
     color: white;
 }
+.delete-btn {
+    background: #7f1d1d;
+    color: white;
+    padding: 16px 24px;
+    
+    display: flex;
+    gap: 12px;
+}
 
 .accept-btn:hover {
     background: #34d399;
