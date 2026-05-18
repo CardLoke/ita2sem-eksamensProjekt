@@ -35,5 +35,9 @@ namespace ServerApi.Repositories
             var update = Builders<BookingData>.Update.Set(item => item.Status, status);
             _bookings.UpdateOne(filter, update);
         }
+        public void Delete(int id)
+        {
+            _bookings.DeleteOne(item => item.Id == id);
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace ServerApi.Interfaces
         Task<List<BookingData>> GetRequests(User user);
         Task<List<BookingData>> GetStudioRequests(User user);
         void Status(int id, string status);
+        void Delete(int id);
     }
 }

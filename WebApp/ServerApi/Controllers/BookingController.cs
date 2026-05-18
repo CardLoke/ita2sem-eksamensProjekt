@@ -45,5 +45,13 @@ public class BookingController : ControllerBase
         Console.WriteLine("Controller");
         bookingRepo.Status(id, status);
     }
+    [HttpDelete]
+    [Route("delete/{id:int}")]
+    
+    public void Delete(int id)
+    {
+        Console.WriteLine("hej");
+        bookingRepo.Delete(id);
+    }
 }
 
