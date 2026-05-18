@@ -49,6 +49,16 @@
                     }
                 }
             </div>
+            @foreach ( var request in myRequests)
+            @if (request.Status != "Cancelled")
+            {
+                <div class="card-actions">
+                    <button class="btn reject-btn"
+                            @onclick='() => UpdateStatus(request.Id, "Cancelled")'>
+                        Cancel booking
+                    </button>
+                </div>
+            }
         </section>
 
         <!-- Your Studios' Requests -->
