@@ -1,0 +1,19 @@
+h1, h2, h3, p, label {
+    color: white;
+}
+
+input, select {
+    background-color: #1e1e2f;
+    color: white;
+    border: 1px solid #00ffe0;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+button {
+    background-color: #00ffe0;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+}

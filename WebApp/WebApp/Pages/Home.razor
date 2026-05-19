@@ -13,6 +13,38 @@
 
     <h1 class="page-title">Find Your Perfect Studio</h1>
     <p class="subtitle">Professional recording studios available for booking</p>
+    
+    <div class="filter-container">
+
+        <div class="filter-group">
+            <label>Max Price</label>
+            <input type="number"
+                   @bind="maxPrice" />
+        </div>
+
+        <div class="filter-group">
+            <label>Min Capacity</label>
+            <input type="number"
+                   @bind="minCapacity" />
+        </div>
+
+        <div class="filter-group">
+            <label>Search Equipment</label>
+            <input type="text"
+                   @bind="equipmentSearch" />
+        </div>
+        
+        <div class="filter-group">
+            <label>Sort By</label>
+
+            <select @bind="sortBy" class="form-input">
+                <option value="">None</option>
+                <option value="price">Cheapest First</option>
+                <option value="capacity">Largest Capacity First</option>
+            </select>
+        </div>
+
+    </div>
 
     <div class="studios-grid">
         @if (studios == null || !studios.Any())
@@ -21,7 +53,32 @@
         }
         else
         {
-            @foreach (var s in studios)
+            @foreach (var s in (
+                          sortBy == "price"
+                              ? studios
+                                  .Where(s =>
+                                      (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
+                                      (minCapacity == 0 || s.StudioSize >= minCapacity) &&
+                                      (string.IsNullOrWhiteSpace(equipmentSearch) ||
+                                       s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)))
+                                  .OrderBy(s => s.StudioPrice)
+
+                              : sortBy == "capacity"
+                                  ? studios
+                                      .Where(s =>
+                                          (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
+                                          (minCapacity == 0 || s.StudioSize >= minCapacity) &&
+                                          (string.IsNullOrWhiteSpace(equipmentSearch) ||
+                                           s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)))
+                                      .OrderByDescending(s => s.StudioSize)
+
+                                  : studios
+                                      .Where(s =>
+                                          (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
+                                          (minCapacity == 0 || s.StudioSize >= minCapacity) &&
+                                          (string.IsNullOrWhiteSpace(equipmentSearch) ||
+                                           s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)))
+                      ))
             {
                 @if (s.Visibility == "Offentlig" || s.Owner == loggedIn?.Username)
                 {
@@ -102,12 +159,15 @@
 @code
 {
     ModalDialog? delete;
-
-
     int tempId;
 
     User? loggedIn;
     List<Studio>? studios = new();
+    int maxPrice = 0;
+    int minCapacity = 0;
+    string equipmentSearch = "";
+    string sortBy = "";
+    
 
     private bool showBookingModal = false;
     private Studio? selectedStudio;
