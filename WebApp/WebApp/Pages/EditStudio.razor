@@ -29,6 +29,13 @@
     <p> Størrelse: </p>
     <input @bind ="studio.StudioSize" />
     
+    <p>Synlighed:</p>
+
+    <select @bind="studio.Visibility">
+        <option value="Offentlig">Offentlig</option>
+        <option value="Privat">Privat</option>
+    </select>
+    
     <button @onclick="Save">Save</button>
     <p> @message</p>
 }

@@ -60,11 +60,14 @@
                            class="form-input"
                            placeholder="Full address of the studio" />
             </div>
-            <p>Synlighed:</p>
-            <select @bind="aNewStudio.Visibility">
-                <option value ="Offentlig">Offentlig</option>
-                <option value ="Privat">Privat</option>
-            </select>
+            <div class="form-group">
+                <label>Synlighed</label>
+
+                <select @bind="aNewStudio.Visibility" class="form-input">
+                    <option value="Offentlig">Offentlig</option>
+                    <option value="Privat">Privat</option>
+                </select>
+            </div>
             
             
             <button class="submit-btn" @onclick="OnClickRegisterStudio">
