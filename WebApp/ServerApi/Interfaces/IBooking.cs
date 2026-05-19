@@ -5,6 +5,7 @@ namespace ServerApi.Interfaces
     public interface IBooking
     {
         void Booking(BookingData data);
+        List<BookingData> GetBookings();
         Task<List<BookingData>> GetRequests(User user);
         Task<List<BookingData>> GetStudioRequests(User user);
         void Status(int id, string status);

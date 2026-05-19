@@ -39,5 +39,10 @@ namespace ServerApi.Repositories
         {
             _bookings.DeleteOne(item => item.Id == id);
         }
+
+        public List<BookingData> GetBookings()
+        {
+            return _bookings.Find(item => true).ToList();
+        }
     }
 }

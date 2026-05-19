@@ -20,9 +20,15 @@ public class BookingController : ControllerBase
         bookingRepo = _repo;
     }
     [HttpPost]
-    public void Booking(BookingData data)
+    public string Booking(BookingData data)
     {
+        (bool con, string error) = validateBooking(data);
+        if (con)
+        {
+            return error;
+        }
         bookingRepo.Booking(data);
+        return "ok";
     }
     [HttpPost]
     [Route("requests")]
@@ -52,6 +58,23 @@ public class BookingController : ControllerBase
     {
         Console.WriteLine("hej");
         bookingRepo.Delete(id);
+    }
+    private (bool, string) validateBooking(BookingData data) 
+    {
+        
+        DateTime newStartTime = DateTime.Parse(data.StartTime);
+        DateTime newEndTime = DateTime.Parse(data.EndTime);
+        // Check if the start time is before the end time
+        if (newStartTime >= newEndTime)
+        {
+            return (false, "start time is before the end time");
+        }
+        List<BookingData> bookings = bookingRepo.GetBookings();
+        bool res = bookings.Any(booking =>
+                                     data.Date.Year * 1000 + data.Date.DayOfYear == booking.Date.Year * 1000 + booking.Date.DayOfYear &&
+                                     newStartTime < DateTime.Parse(booking.EndTime) &&
+                                     newEndTime > DateTime.Parse(booking.StartTime));
+        return (res, "The studio is already booked for the selected time slot.");
     }
 }
 
