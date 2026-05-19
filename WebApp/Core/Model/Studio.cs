@@ -11,5 +11,7 @@ public class Studio
     public int Id { get; set; }
     public string Owner { get; set; } = "";
     public int Capacity { get; set; }
+    public string Visibility { get; set; } = "Offentlig";
     
+
 }

@@ -60,7 +60,13 @@
                            class="form-input"
                            placeholder="Full address of the studio" />
             </div>
-
+            <p>Synlighed:</p>
+            <select @bind="aNewStudio.Visibility">
+                <option value ="Offentlig">Offentlig</option>
+                <option value ="Privat">Privat</option>
+            </select>
+            
+            
             <button class="submit-btn" @onclick="OnClickRegisterStudio">
                 Register Studio
             </button>
