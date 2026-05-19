@@ -31,12 +31,14 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseRouting();
+app.UseCors("policy");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseCors("policy");
+
 
 app.MapControllers();
 

@@ -29,40 +29,47 @@
                 {
                     @foreach (var request in myRequests)
                     {
-                        <div class="booking-card @request.Status.ToLower()">
+                        <div class="booking-card @(request.Status?.ToLower() ?? "")">
                             <div class="card-header">
                                 <h3>@request.StudioName</h3>
-                                <span class="status @request.Status.ToLower()">@request.Status</span>
+                                <span class="status @(request.Status?.ToLower() ?? "")">@request.Status</span>
                             </div>
+
                             <div class="card-body">
                                 <p><strong>Owner:</strong> @request.StudioOwner</p>
                                 <p><strong>Address:</strong> @request.StudioAddress</p>
                                 <p><strong>Date:</strong> @request.Date.ToShortDateString()</p>
                                 <p><strong>Time:</strong> @request.StartTime - @request.EndTime</p>
                                 <p><strong>Attendees:</strong> @request.Attendees</p>
+
                                 @if (!string.IsNullOrEmpty(request.Notes))
                                 {
                                     <p><strong>Notes:</strong> @request.Notes</p>
                                 }
+
                                 @if(request.Status == "Rejected")
                                 {
-                                    <button class="btn delete-btn" @onclick="() => Modal(request.Id)">Delete</button>
+                                    <button class="btn delete-btn"
+                                            @onclick="() => Modal(request.Id)">
+                                        Delete
+                                    </button>
                                 }
+
+                                @if ((request.Status ?? "") != "Cancelled")
+                                {
+                                    <div class="card-actions">
+                                        <button class="btn reject-btn"
+                                                @onclick='() => UpdateStatus(request.Id, "Cancelled")'>
+                                            Cancel booking
+                                        </button>
+                                    </div>
+                                }
+
                             </div>
                         </div>
                     }
                 }
             </div>
-            @foreach ( var request in myRequests)
-            @if (request.Status != "Cancelled")
-            {
-                <div class="card-actions">
-                    <button class="btn reject-btn"
-                            @onclick='() => UpdateStatus(request.Id, "Cancelled")'>
-                        Cancel booking
-                    </button>
-                </div>
-            }
         </section>
 
         <!-- Your Studios' Requests -->
@@ -77,29 +84,37 @@
                 {
                     @foreach (var request in myStudioRequests)
                     {
-                        <div class="booking-card @request.Status.ToLower()">
+                        <div class="booking-card @(request.Status?.ToLower() ?? "")">
                             <div class="card-header">
                                 <h3>@request.StudioName</h3>
-                                <span class="status @request.Status.ToLower()">@request.Status</span>
+                                <span class="status @(request.Status?.ToLower() ?? "")">@request.Status</span>
                             </div>
+
                             <div class="card-body">
                                 <p><strong>Request from:</strong> @request.Name</p>
                                 <p><strong>Address:</strong> @request.StudioAddress</p>
                                 <p><strong>Date:</strong> @request.Date.ToShortDateString()</p>
                                 <p><strong>Time:</strong> @request.StartTime - @request.EndTime</p>
                                 <p><strong>Attendees:</strong> @request.Attendees</p>
+
                                 @if (!string.IsNullOrEmpty(request.Notes))
                                 {
                                     <p><strong>Notes:</strong> @request.Notes</p>
                                 }
                             </div>
-                            
-                            
-                                <div class="card-actions">
-                                    <button class="btn accept-btn" @onclick='() => UpdateStatus(request.Id, "Accepted")' > Accept</button>
-                                    <button class="btn reject-btn"  @onclick='() => UpdateStatus(request.Id, "Rejected")'> Reject</button>
-                                </div>
-                            
+
+                            <div class="card-actions">
+                                <button class="btn accept-btn"
+                                        @onclick='() => UpdateStatus(request.Id, "Accepted")'>
+                                    Accept
+                                </button>
+
+                                <button class="btn reject-btn"
+                                        @onclick='() => UpdateStatus(request.Id, "Rejected")'>
+                                    Reject
+                                </button>
+                            </div>
+
                         </div>
                     }
                 }
@@ -107,6 +122,7 @@
         </section>
     </div>
 </div>
+
 <ModalDialog @ref="delete" Title="Confirm Deletion">
     Are you sure you want to delete your request?
     <button class="btn btn-danger" @onclick="Delete">Yes, Delete</button>
@@ -117,18 +133,16 @@
     private User? loggedIn;
     private List<BookingData>? myRequests;
     private List<BookingData>? myStudioRequests;
+
     ModalDialog? delete;
     int tempId;
-
 
     protected override async Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
 
-
         if (loggedIn != null)
         {
-
             await LoadRequests();
         }
     }
@@ -146,21 +160,24 @@
 
     private async Task UpdateStatus(int bookingId, string newStatus)
     {
-
         Console.WriteLine("hej");
+
         await http.PutAsJsonAsync($"http://localhost:5112/api/booking/status/{bookingId}", newStatus);
-        await LoadRequests(); 
+
+        await LoadRequests();
     }
+
     public async Task Delete()
     {
         var response = await http.DeleteAsync($"http://localhost:5112/api/booking/delete/{tempId}");
+
         if (response.IsSuccessStatusCode)
         {
             delete?.Close();
             await LoadRequests();
-
         }
     }
+
     public void Modal(int id)
     {
         tempId = id;
