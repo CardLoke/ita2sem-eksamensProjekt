@@ -60,38 +60,7 @@
         }
         else
         {
-            @foreach (var s in (
-                          sortBy == "price"
-                              ? studios
-                                  .Where(s =>
-                                      (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
-                                      (minCapacity == 0 || s.StudioSize >= minCapacity) &&
-                                      (string.IsNullOrWhiteSpace(equipmentSearch) ||
-                                       s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)) &&
-                                      (string.IsNullOrWhiteSpace(studioSearch) ||
-                                       s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase)))
-                                  .OrderBy(s => s.StudioPrice)
-
-                              : sortBy == "capacity"
-                                  ? studios
-                                      .Where(s =>
-                                          (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
-                                          (minCapacity == 0 || s.StudioSize >= minCapacity) &&
-                                          (string.IsNullOrWhiteSpace(equipmentSearch) ||
-                                           s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)) &&
-                                          (string.IsNullOrWhiteSpace(studioSearch) ||
-                                           s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase)))
-                                      .OrderByDescending(s => s.StudioSize)
-
-                                  : studios
-                                      .Where(s =>
-                                          (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
-                                          (minCapacity == 0 || s.StudioSize >= minCapacity) &&
-                                          (string.IsNullOrWhiteSpace(equipmentSearch) ||
-                                           s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)) &&
-                                          (string.IsNullOrWhiteSpace(studioSearch) ||
-                                           s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase)))
-                      ))
+            @foreach (var s in GetFilteredStudios())
             {
                 @if (s.Visibility == "Offentlig" || s.Owner == loggedIn?.Username)
                 {
@@ -217,6 +186,33 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private IEnumerable<Studio> GetFilteredStudios()
+    {
+        IEnumerable<Studio> result = studios ?? new List<Studio>();
+
+        result = result.Where(s =>
+            (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
+            (minCapacity == 0 || s.StudioSize >= minCapacity) &&
+            (string.IsNullOrWhiteSpace(equipmentSearch) ||
+             s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(studioSearch) ||
+             s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase)));
+
+        if (sortBy == "price")
+        {
+            result = result.OrderBy(s => s.StudioPrice);
+        }
+        else if (sortBy == "capacity")
+        {
+            result = result.OrderByDescending(s => s.StudioSize);
+        }
+
+        return result;
+    }
+            
+    
+
+    
     public void AddStu()
     {
         navigationManager.NavigateTo("/AddStudio");
