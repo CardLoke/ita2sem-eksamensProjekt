@@ -8,6 +8,7 @@ namespace ServerApi.Interfaces
         List<BookingData> GetBookings();
         Task<List<BookingData>> GetRequests(User user);
         Task<List<BookingData>> GetStudioRequests(User user);
+        Task<List<BookingData>> GetByStudioId(int studioId);
         void Status(int id, string status);
         void Delete(int id);
     }

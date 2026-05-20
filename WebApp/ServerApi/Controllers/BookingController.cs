@@ -59,6 +59,12 @@ public class BookingController : ControllerBase
         Console.WriteLine("hej");
         bookingRepo.Delete(id);
     }
+    [HttpGet]
+    [Route("studio/{id}")]
+    public async Task<List<BookingData>> GetStudioBookings(int id)
+    {
+        return await bookingRepo.GetByStudioId(id);
+    }
     private (bool, string) validateBooking(BookingData data) 
     {
         

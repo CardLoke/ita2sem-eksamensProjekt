@@ -28,6 +28,10 @@ namespace ServerApi.Repositories
         {
             return await _bookings.Find(item => item.StudioOwner == user.Username).ToListAsync();
         }
+        public async Task<List<BookingData>> GetByStudioId(int studioId) 
+        {
+            return await _bookings.Find(item => item.StudioId == studioId).ToListAsync();
+        }
         public void Status(int id, string status)
         {
             Console.WriteLine("Repo");

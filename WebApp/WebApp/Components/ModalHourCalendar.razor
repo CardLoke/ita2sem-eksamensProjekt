@@ -1,0 +1,160 @@
+﻿@using Core.Model
+@inject IJSRuntime JS
+
+<div class="modal-backdrop" style="display: @(IsOpen ? "flex" : "none")">
+    <div class="modal-content calendar-modal">
+
+        <!-- HEADER -->
+        <div class="modal-header">
+            <h2>Weekly Calendar</h2>
+
+            <div class="nav-controls">
+                <button class="btn btn-sm btn-light" @onclick="PrevWeek">◀</button>
+
+                <strong class="mx-2">
+                    @WeekStart.ToString("dd MMM") - @WeekEnd.ToString("dd MMM yyyy")
+                </strong>
+
+                <button class="btn btn-sm btn-light" @onclick="NextWeek">▶</button>
+            </div>
+
+            <button class="close-btn" @onclick="Close">✕</button>
+        </div>
+
+        <!-- SCROLL AREA -->
+        <div class="calendar-scroll">
+            <div class="calendar-grid">
+
+                <div class="corner-header"></div>
+                @foreach (var day in WeekDays)
+                {
+                    <div class="day-header">
+                        <strong>@day.ToString("ddd dd")</strong>
+                    </div>
+                }
+
+                @foreach (var hour in Hours)
+                {
+                    <div class="time-slot">
+                        @($"{hour:00}:00")
+                    </div>
+
+                    @foreach (var day in WeekDays)
+                    {
+                        <div class="cell"></div>
+                    }
+                }
+
+                <div class="calendar-overlay">
+                    @foreach (var day in WeekDays)
+                    {
+                        @foreach (var booking in GetBookingsForDay(day))
+                        {
+                            <div class="event-block" style="@GetBookingStyle(booking, day)">
+                                <strong>@booking.Name</strong><br />
+                                <small>@booking.StartTime - @booking.EndTime</small>
+                            </div>
+                        }
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public Studio? Studio { get; set; }
+    [Parameter] public List<BookingData> Bookings { get; set; } = new();
+
+    private DateTime SelectedDate { get; set; } = DateTime.Today;
+    private List<int> Hours = Enumerable.Range(0, 24).ToList();
+
+    private DateTime WeekStart => StartOfWeek(SelectedDate);
+    private DateTime WeekEnd => WeekStart.AddDays(6);
+
+    private List<DateTime> WeekDays =>
+        Enumerable.Range(0, 7).Select(i => WeekStart.AddDays(i)).ToList();
+
+    // FIXED: Ensures strict date-only comparisons to prevent timezone/time offset skips
+    private IEnumerable<BookingData> GetBookingsForDay(DateTime day)
+    {
+        return Bookings.Where(b => b.Date.Date == day.Date);
+    }
+
+    private DateTime Combine(DateTime date, string time)
+    {
+        // Try to parse as a pure TimeSpan (e.g., "03:30:00")
+        if (TimeSpan.TryParse(time, out var ts))
+        {
+            return date.Date.Add(ts);
+        }
+
+        // Fallback: If the DB includes a dummy date (e.g., "0001-01-01 03:30:00")
+        if (DateTime.TryParse(time, out var dt))
+        {
+            return date.Date.Add(dt.TimeOfDay);
+        }
+
+        return date.Date;
+    }
+
+    // create a CSS style string to position the booking block correctly in the calendar grid
+    private string GetBookingStyle(BookingData b, DateTime day)
+    {
+        var hourHeight = 35; // Must strictly match the CSS 35px
+
+        var start = Combine(day, b.StartTime);
+        var end = Combine(day, b.EndTime);
+
+        var startHours = start.TimeOfDay.TotalHours;
+        var endHours = end.TimeOfDay.TotalHours;
+
+        if (endHours <= startHours && endHours == 0)
+        {
+            endHours = 24;
+        }
+
+        double top = startHours * hourHeight;
+        double height = (endHours - startHours) * hourHeight;
+
+        var dayIndex = WeekDays.FindIndex(d => d.Date == day.Date);
+        if (dayIndex < 0) dayIndex = 0;
+
+        double columnWidth = 100.0 / 7.0;
+        double leftPercent = dayIndex * columnWidth;
+
+        // Use InvariantCulture to enforce dots instead of commas (e.g., 122.5px instead of 122,5px)
+        var ci = System.Globalization.CultureInfo.InvariantCulture;
+
+        return $@"
+        position: absolute;
+        top: {top.ToString("F2", ci)}px;
+        left: {leftPercent.ToString("F2", ci)}%;
+        width: calc({columnWidth.ToString("F2", ci)}% - 4px);
+        margin-left: 2px;
+        height: {height.ToString("F2", ci)}px;
+        background: #4f46e5;
+        color: white;
+        border-radius: 6px;
+        padding: 6px;
+        font-size: 12px;
+        overflow: hidden;
+        box-sizing: border-box;
+    ";
+    }
+
+    // FIXED: Force Sunday to always be index 0 to align flawlessly with "søn 17"
+    private DateTime StartOfWeek(DateTime date)
+    {
+        int diff = (7 + (date.DayOfWeek - DayOfWeek.Sunday)) % 7;
+        return date.AddDays(-diff).Date;
+    }
+
+    private void PrevWeek() => SelectedDate = SelectedDate.AddDays(-7);
+    private void NextWeek() => SelectedDate = SelectedDate.AddDays(7);
+
+    private async Task Close() => await IsOpenChanged.InvokeAsync(false);
+}

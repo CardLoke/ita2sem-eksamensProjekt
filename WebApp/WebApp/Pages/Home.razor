@@ -13,7 +13,6 @@
 
     <h1 class="page-title">Find Your Perfect Studio</h1>
     <p class="subtitle">Professional recording studios available for booking</p>
-    
     <div class="filter-container">
 
         <div class="filter-group">
@@ -110,13 +109,21 @@
                                         Book Studio
                                     </button>
                                 </div>
+                                
                             }
+                            <div class="book-container">
+                                <button class="book-btn"
+                                        @onclick="() => OpenCalendar(s)">
+                                    View Calendar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 }
             }
         }
     </div>
+
 
     @if (loggedIn != null)
     {
@@ -137,9 +144,19 @@
         IsOpenChanged="@((value) => showBookingModal = value)"
         Studio="@selectedStudio"
         OnBookingConfirmed="HandleBooking" />
+    <ModalHourCalendar
+        IsOpen="@showHourModal"
+        IsOpenChanged="@((v) => showHourModal = v)"
+        Studio="@selectedStudio"
+        Bookings="@studioBookings" />
 </div>
 @code
 {
+    private bool showHourModal = false;
+    private DateTime selectedDate = DateTime.Today;
+    private bool showCalendarModal = false;
+    private List<BookingData> studioBookings = new();
+
     ModalDialog? delete;
     int tempId;
 
@@ -237,5 +254,24 @@
 
         }
     }
+    private async Task OpenCalendar(Studio studio)
+{
+    selectedStudio = studio;
+    showHourModal = true; // open immediately (better UX)
+
+    studioBookings = new();
+
+    try
+    {
+        studioBookings =
+            await http.GetFromJsonAsync<List<BookingData>>(
+                $"http://localhost:5112/api/booking/studio/{studio.Id}")
+            ?? new();
+            Console.WriteLine($"Loaded {studioBookings.Count} bookings for studio {studio.StudioName}");
+    }
+    catch { }
+
+    StateHasChanged();
+}
     
 }
