@@ -57,8 +57,6 @@
 
                                 @if ((request.Status ?? "") != "Cancelled" &&
                                      (request.Status ?? "") != "Rejected")
-                        
-                                    
                                 {
                                     <div class="card-actions">
                                         <button class="btn reject-btn"
@@ -90,7 +88,18 @@
                         <div class="booking-card @(request.Status?.ToLower() ?? "")">
                             <div class="card-header">
                                 <h3>@request.StudioName</h3>
-                                <span class="status @(request.Status?.ToLower() ?? "")">@request.Status</span>
+
+                                <span class="status @(request.Status?.ToLower() ?? "")">
+                                    @request.Status
+                                </span>
+
+                                @if (request.Status == "Rejected")
+                                {
+                                    <button class="close-btn"
+                                            @onclick="() => Modal(request.Id)">
+                                        ✕
+                                    </button>
+                                }
                             </div>
 
                             <div class="card-body">
