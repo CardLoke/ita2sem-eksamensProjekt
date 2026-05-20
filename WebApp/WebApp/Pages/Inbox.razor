@@ -55,7 +55,10 @@
                                     </button>
                                 }
 
-                                @if ((request.Status ?? "") != "Cancelled")
+                                @if ((request.Status ?? "") != "Cancelled" &&
+                                     (request.Status ?? "") != "Rejected")
+                        
+                                    
                                 {
                                     <div class="card-actions">
                                         <button class="btn reject-btn"
