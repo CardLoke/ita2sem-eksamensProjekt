@@ -12,5 +12,7 @@ namespace ServerApi.Interfaces
         void Status(int id, string status);
         void Delete(int id);
         Task<string?> GetStudioOwnerEmail(int studioId);
+        Task<string?> GetStudioOwnerEmailStatus(int id);
+        Task<BookingData> GetStatusData(int id);
     }
 }

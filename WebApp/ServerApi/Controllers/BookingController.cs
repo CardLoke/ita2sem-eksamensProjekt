@@ -1,9 +1,10 @@
 ﻿using Core.Model;
+using Microsoft.AspNetCore.Mvc;
 using ServerApi.Interfaces;
 using ServerApi.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using ZstdSharp.Unsafe;
 using ServerApi.Services;
+using ZstdSharp.Unsafe;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 
@@ -55,10 +56,17 @@ public class BookingController : ControllerBase
     }
     [HttpPut]
     [Route("status/{id:int}")]
-    public void Status(int id, [FromBody] string status)
+    public async Task Status(int id, [FromBody] string status)
     {
         Console.WriteLine("Controller");
         bookingRepo.Status(id, status);
+        var ownerEmail = await bookingRepo.GetStudioOwnerEmailStatus(id);
+        var data = await bookingRepo.GetStatusData(id);
+        if (!string.IsNullOrEmpty(ownerEmail))
+        {
+            await emailService.SendStatusNotificationAsync(data, ownerEmail);
+        }
+        
     }
     [HttpDelete]
     [Route("delete/{id:int}")]

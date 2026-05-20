@@ -52,6 +52,22 @@ namespace ServerApi.Repositories
         {
             return _bookings.Find(item => true).ToList();
         }
+        public async Task<string> GetStudioOwnerEmailStatus(int bookingId) {
+
+            var bookingFilter = Builders<BookingData>.Filter.Eq(s => s.Id, bookingId);
+            var booking = await _bookings.Find(bookingFilter).FirstOrDefaultAsync();
+
+            var userFilter = Builders<User>.Filter.Eq(u => u.Username, booking.Name);
+            var user = await _users.Find(userFilter).FirstOrDefaultAsync();
+
+            return user?.Mail;
+        }
+        public async Task<BookingData> GetStatusData(int id)
+        {
+            var bookingFilter = Builders<BookingData>.Filter.Eq(s => s.Id, id);
+            var bookingData = await _bookings.Find(bookingFilter).FirstOrDefaultAsync();
+            return bookingData;
+        }
         public async Task<string?> GetStudioOwnerEmail(int studioId)
         {
             try
