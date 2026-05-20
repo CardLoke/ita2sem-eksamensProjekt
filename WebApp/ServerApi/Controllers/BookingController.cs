@@ -3,6 +3,7 @@ using ServerApi.Interfaces;
 using ServerApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using ZstdSharp.Unsafe;
+using ServerApi.Services;
 
 
 
@@ -14,13 +15,15 @@ namespace ServerApi.Controllers;
 public class BookingController : ControllerBase
     {
     private readonly IBooking bookingRepo;
+    private readonly IEmailService emailService;
 
-    public BookingController(IBooking _repo)
+    public BookingController(IBooking _repo, IEmailService _emailService)
     {
         bookingRepo = _repo;
+        emailService = _emailService;
     }
     [HttpPost]
-    public string Booking(BookingData data)
+    public async Task<string> Booking(BookingData data)
     {
         (bool con, string error) = validateBooking(data);
         if (con)
@@ -28,6 +31,12 @@ public class BookingController : ControllerBase
             return error;
         }
         bookingRepo.Booking(data);
+        var ownerEmail = await bookingRepo.GetStudioOwnerEmail(data.StudioId);
+
+        if (!string.IsNullOrEmpty(ownerEmail))
+        {
+            await emailService.SendBookingNotificationAsync(data, ownerEmail);
+        }
         return "ok";
     }
     [HttpPost]

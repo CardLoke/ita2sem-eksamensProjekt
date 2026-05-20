@@ -8,12 +8,16 @@ namespace ServerApi.Repositories
     public class BookingRepositoryMongoDB : IBooking
     {
         private readonly IMongoCollection<BookingData>? _bookings;
+        private readonly IMongoCollection<Studio>? _studios; // Add this line
+        private readonly IMongoCollection<User>? _users;     // Add this line
 
         public BookingRepositoryMongoDB()
         {
             var client = new MongoClient("mongodb+srv://kris600m:eyh94zkh@cluster0.xpou06p.mongodb.net/");
             var database = client.GetDatabase("SessionSync");
             _bookings = database.GetCollection<BookingData>("Booking");
+            _studios = database.GetCollection<Studio>("Studio"); // Add this line
+            _users = database.GetCollection<User>("Users");       // Add this line
         }
         public void Booking(BookingData data)
         {
@@ -47,6 +51,50 @@ namespace ServerApi.Repositories
         public List<BookingData> GetBookings()
         {
             return _bookings.Find(item => true).ToList();
+        }
+        public async Task<string?> GetStudioOwnerEmail(int studioId)
+        {
+            try
+            {
+                Console.WriteLine($"[DEBUG] Looking for studio with ID: {studioId}");
+
+                // Step 1: Find the studio
+                var studioFilter = Builders<Studio>.Filter.Eq(s => s.Id, studioId);
+                var studio = await _studios.Find(studioFilter).FirstOrDefaultAsync();
+
+                if (studio == null)
+                {
+                    Console.WriteLine($"[DEBUG] Studio with ID {studioId} not found");
+                    return null;
+                }
+
+                Console.WriteLine($"[DEBUG] Studio found. Owner username: {studio.Owner}");
+
+                if (string.IsNullOrEmpty(studio.Owner))
+                {
+                    Console.WriteLine("[DEBUG] Studio has no Owner");
+                    return null;
+                }
+
+                // Step 2: Find the user
+                var userFilter = Builders<User>.Filter.Eq(u => u.Username, studio.Owner);
+                var user = await _users.Find(userFilter).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    Console.WriteLine($"[DEBUG] User with username '{studio.Owner}' not found");
+                    return null;
+                }
+
+                Console.WriteLine($"[DEBUG] User found. Email: {user.Mail}");
+
+                return user.Mail;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] GetStudioOwnerEmail failed: {ex.Message}");
+                return null;
+            }
         }
     }
 }

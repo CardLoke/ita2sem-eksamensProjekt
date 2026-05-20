@@ -1,5 +1,7 @@
-using ServerApi.Repositories;
+using Core.Model;
 using ServerApi.Interfaces;
+using ServerApi.Repositories;
+using ServerApi.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IUser, UserRepositoryMongoDB>();
 builder.Services.AddSingleton<IStudio, StudioRepositoryMongoDB>();
 builder.Services.AddSingleton<IBooking, BookingRepositoryMongoDB>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("policy",
