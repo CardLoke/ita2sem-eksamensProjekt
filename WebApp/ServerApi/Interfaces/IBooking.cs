@@ -14,5 +14,6 @@ namespace ServerApi.Interfaces
         Task<string?> GetStudioOwnerEmail(int studioId);
         Task<string?> GetStudioOwnerEmailStatus(int id);
         Task<BookingData> GetStatusData(int id);
+        
     }
 }

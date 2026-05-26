@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IUser, UserRepositoryMongoDB>();
 builder.Services.AddSingleton<IStudio, StudioRepositoryMongoDB>();
 builder.Services.AddSingleton<IBooking, BookingRepositoryMongoDB>();
+builder.Services.AddSingleton<IInvite, InviteRepositoryMongoDB>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddCors(options =>

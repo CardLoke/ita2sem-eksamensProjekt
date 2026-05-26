@@ -43,4 +43,10 @@ public class StudioController : ControllerBase
     {
         await studioRepo.Edit(studio);
     }
+    [HttpPut]
+    [Route("invite")]
+    public void Invite(Invite invite)
+    {
+        studioRepo.Invite(invite);
+    }
 }

@@ -48,4 +48,9 @@ public class UserController : ControllerBase
     {
         await userRepo.Edit(user);
     }
+    [HttpGet]
+    public List<User> GetAll()
+    {
+        return userRepo.GetAll();
+    }
 }

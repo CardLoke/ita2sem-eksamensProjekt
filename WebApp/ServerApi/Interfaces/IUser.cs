@@ -8,5 +8,6 @@ namespace ServerApi.Interfaces
         Task<User?> LogIn(LoginRequest loginRequest);
         Task Edit(User user);
         Task<User?> SignUpValidation(string username, string mail);
+        List<User> GetAll();
     }
 }

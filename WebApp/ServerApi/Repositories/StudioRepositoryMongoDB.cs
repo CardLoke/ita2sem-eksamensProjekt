@@ -1,7 +1,8 @@
-using ServerApi.Interfaces;
 using Core.Model;
-using System.Collections.Generic;
 using MongoDB.Driver;
+using ServerApi.Interfaces;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 namespace ServerApi.Repositories
 {
@@ -33,6 +34,12 @@ namespace ServerApi.Repositories
         public async Task Edit(Studio studio)
         {
             await _studios.ReplaceOneAsync(s => s.Id == studio.Id, studio);
+        }
+        public void Invite(Invite invite)
+        {
+            var filter = Builders<Studio>.Filter.Eq(item => item.Id, invite.Studio.Id);
+            var update = Builders<Studio>.Update.AddToSet(item => item.PrivateUsers, invite.Username);
+            _studios.UpdateOne(filter, update);
         }
     }
 }

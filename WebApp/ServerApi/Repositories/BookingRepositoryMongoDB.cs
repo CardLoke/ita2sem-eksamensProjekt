@@ -68,6 +68,7 @@ namespace ServerApi.Repositories
             var bookingData = await _bookings.Find(bookingFilter).FirstOrDefaultAsync();
             return bookingData;
         }
+        
         public async Task<string?> GetStudioOwnerEmail(int studioId)
         {
             try
