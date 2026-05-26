@@ -47,13 +47,6 @@
                                     <p><strong>Notes:</strong> @request.Notes</p>
                                 }
 
-                                @if(request.Status == "Rejected")
-                                {
-                                    <button class="btn delete-btn"
-                                            @onclick="() => Modal(request.Id)">
-                                        Delete
-                                    </button>
-                                }
 
                                 @if ((request.Status ?? "") != "Cancelled" &&
                                      (request.Status ?? "") != "Rejected")
@@ -132,6 +125,47 @@
                 }
             </div>
         </section>
+        <section class="inbox-section">
+            <h2 class="section-title">Your Private Studio Invites</h2>
+            <div class="requests-grid">
+                @if (mInvites == null || !mInvites.Any())
+                {
+                    <p class="no-data">You dont have any invitation at this time.</p>
+                }
+                else
+                {
+                    @foreach (var invite in mInvites)
+                    {
+                        
+                            <div class="card-header">
+                                <h3>@invite.Studio.StudioName</h3>
+                                
+                            </div>
+
+                            <div class="card-body">
+                                <p><strong>Owner:</strong> @invite.Studio.Owner</p>
+                                <p><strong>Address:</strong> @invite.Studio.StudioAddress</p>
+                                
+
+
+
+                               
+                                    <div class="card-actions">
+                                        <button class="btn reject-btn"
+                                                @onclick="() => RejectInvite(invite.Id)">
+                                            Accept Invitation
+                                        </button>
+                                        <button ></button>
+                                        <button class="btn accept-btn" @onclick="()=> ApproveInvite(invite)"></button>
+                                    </div>
+                                }
+
+                            </div>
+                        
+                    }
+                }
+            </div>
+        </section>
     </div>
 </div>
 
@@ -145,6 +179,7 @@
     private User? loggedIn;
     private List<BookingData>? myRequests;
     private List<BookingData>? myStudioRequests;
+    List<Invite>? mInvites = new();
 
     ModalDialog? delete;
     int tempId;
@@ -152,7 +187,7 @@
     protected override async Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
-
+        mInvites = await http.GetFromJsonAsync<List<Invite>>($"http://localhost:5112/api/invite/get/{loggedIn.Username}");
         if (loggedIn != null)
         {
             await LoadRequests();
@@ -194,5 +229,14 @@
     {
         tempId = id;
         delete?.Open();
+    }
+    public async Task RejectInvite(int id)
+    {
+        await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{id}");
+    }
+    public async Task ApproveInvite(Invite invite)
+    {
+        await http.PutAsJsonAsync("http://localhost:5112/api/Studio/invite", invite);
+        await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{invite.Id}");
     }
 }

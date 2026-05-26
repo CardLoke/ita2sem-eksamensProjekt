@@ -8,6 +8,7 @@ namespace ServerApi.Interfaces
         List<Studio> GetAll();
         void Delete(int id);
         Task Edit(Studio studio);
+        void Invite(Invite invite);
     }
     
 }

@@ -49,6 +49,7 @@
                    @bind="studioSearch"
                    class="form-input"/>
         </div>
+        <button class="filter-group" id="private-btn" @onclick="ShowPrivateStudios">@privateString</button>
 
     </div>
 
@@ -61,7 +62,7 @@
         {
             @foreach (var s in GetFilteredStudios())
             {
-                @if (s.Visibility == "Offentlig" || s.Owner == loggedIn?.Username)
+                @if (s.Visibility == privateIf || s.Owner == loggedIn?.Username)
                 {
                     <div class="studio-card">
                         <div class="studio-image">
@@ -117,6 +118,9 @@
                                     View Calendar
                                 </button>
                             </div>
+                            <div class="book-container">
+                                <button class="book-btn" @onclick="() => ModalInvite(s)">Invite User</button>
+                            </div>
                         </div>
                     </div>
                 }
@@ -149,9 +153,29 @@
         IsOpenChanged="@((v) => showHourModal = v)"
         Studio="@selectedStudio"
         Bookings="@studioBookings" />
+    <InviteUsersModal @ref="invite" Title="Invite Users">
+        <label>Enter Username</label>
+        <InputText id="invite" @bind-Value="tempUsername">
+            
+        </InputText>
+        <p style="color: @errorColor">@error</p>
+        <button class="btn btn-danger" @onclick="() => InviteCheck(tempUsername)">Invite</button>
+        <button class="btn btn-secondary" @onclick="delete.Close">Cancel</button>
+    </InviteUsersModal>
+   
 </div>
 @code
 {
+    Invite? mInvite;
+    Studio? tempStudio;
+    string errorColor = "";
+    string error = "";
+    List<User> allUsers = new();
+    string tempUsername = "";
+    InviteUsersModal? invite;
+    string privateIf = "Public";  
+    List<Studio> privateStudios = new();
+    string privateString = "Show Private Studios";
     private bool showHourModal = false;
     private DateTime selectedDate = DateTime.Today;
     private bool showCalendarModal = false;
@@ -167,7 +191,7 @@
     string equipmentSearch = "";
     string sortBy = "";
     string studioSearch = "";
-    
+
 
     private bool showBookingModal = false;
     private Studio? selectedStudio;
@@ -226,10 +250,10 @@
 
         return result;
     }
-            
-    
 
-    
+
+
+
     public void AddStu()
     {
         navigationManager.NavigateTo("/AddStudio");
@@ -255,23 +279,88 @@
         }
     }
     private async Task OpenCalendar(Studio studio)
-{
-    selectedStudio = studio;
-    showHourModal = true; // open immediately (better UX)
-
-    studioBookings = new();
-
-    try
     {
-        studioBookings =
-            await http.GetFromJsonAsync<List<BookingData>>(
-                $"http://localhost:5112/api/booking/studio/{studio.Id}")
-            ?? new();
-            Console.WriteLine($"Loaded {studioBookings.Count} bookings for studio {studio.StudioName}");
-    }
-    catch { }
+        selectedStudio = studio;
+        showHourModal = true; // open immediately (better UX)
 
-    StateHasChanged();
-}
-    
+        studioBookings = new();
+
+        try
+        {
+            studioBookings =
+                await http.GetFromJsonAsync<List<BookingData>>(
+                    $"http://localhost:5112/api/booking/studio/{studio.Id}")
+                ?? new();
+            Console.WriteLine($"Loaded {studioBookings.Count} bookings for studio {studio.StudioName}");
+        }
+        catch { }
+
+        StateHasChanged();
+    }
+    public async Task ShowPrivateStudios()
+    {
+        // Toggle between Public and Private mode
+        if (privateIf == "Public")
+        {
+            privateIf = "Private";
+            privateString = "Show Public Studios";
+
+            // Show only private studios the user owns or has been invited to
+            privateStudios.Clear();
+            foreach (var x in studios ?? new List<Studio>())
+            {
+                if (x.Visibility == "Private" &&
+                    (x.Owner == loggedIn?.Username ||
+                     (x.PrivateUsers != null && x.PrivateUsers.Contains(loggedIn?.Username))))
+                {
+                    privateStudios.Add(x);
+                }
+            }
+            studios = privateStudios.ToList();   // Make a copy
+        }
+        else
+        {
+            privateIf = "Public";
+            privateString = "Show Private Studios";
+
+            // Reset to show all studios
+            await LoadStudios();   // This reloads the full list from API
+        }
+
+        StateHasChanged();
+    }
+    public async Task InviteCheck(string username)
+    {
+        bool status = false;
+        foreach(User x in allUsers)
+        {
+            if (x.Username == username)
+            {
+                status = true;
+                break;
+            } 
+        }
+        if (status == false)
+        {
+            errorColor = "#ff0000";
+            error = "User does not exist";
+        }
+        else
+        {
+            errorColor = "#00ff00";
+            error = "Invitation sent!";
+            mInvite.Username = username;
+            mInvite.Studio = tempStudio;
+            mInvite.Id = Random.Shared.Next();
+            await http.PutAsJsonAsync("http://localhost:5112/api/invite",mInvite);
+        }
+
+    }
+    public void ModalInvite(Studio s)
+    {
+        tempStudio = s;
+        invite.Open();
+    }
+
+
 }

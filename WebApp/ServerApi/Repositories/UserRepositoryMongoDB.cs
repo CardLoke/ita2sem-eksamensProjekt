@@ -44,5 +44,9 @@ namespace ServerApi.Repositories
             
             return existingUser;
         }
+        public List<User> GetAll()
+        {
+            return _Users.Find(User => true).ToList();
+        }
     }
 }
