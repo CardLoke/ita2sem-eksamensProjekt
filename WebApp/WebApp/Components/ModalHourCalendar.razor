@@ -50,6 +50,10 @@
                     {
                         @foreach (var booking in GetBookingsForDay(day))
                         {
+                            if (booking.Status == "Cancelled" || booking.Status == "Rejected")
+                            {
+                                continue; // Skip cancelled or rejected bookings
+                            }
                             <div class="event-block" style="@GetBookingStyle(booking, day)">
                                 <strong>@booking.Name</strong><br />
                                 <small>@booking.StartTime - @booking.EndTime</small>
@@ -128,7 +132,24 @@
 
         // Use InvariantCulture to enforce dots instead of commas (e.g., 122.5px instead of 122,5px)
         var ci = System.Globalization.CultureInfo.InvariantCulture;
-
+        if (b.Status == "Accepted")
+        {
+            return $@"
+                position: absolute;
+                top: {top.ToString("F2", ci)}px;
+                left: {leftPercent.ToString("F2", ci)}%;
+                width: calc({columnWidth.ToString("F2", ci)}% - 4px);
+                margin-left: 2px;
+                height: {height.ToString("F2", ci)}px;
+                background: #4f46e5;
+                color: white;
+                border-radius: 6px;
+                padding: 6px;
+                font-size: 12px;
+                overflow: hidden;
+                box-sizing: border-box;
+            ";
+        };
         return $@"
         position: absolute;
         top: {top.ToString("F2", ci)}px;
@@ -136,7 +157,7 @@
         width: calc({columnWidth.ToString("F2", ci)}% - 4px);
         margin-left: 2px;
         height: {height.ToString("F2", ci)}px;
-        background: #4f46e5;
+        background: #fbbc04;
         color: white;
         border-radius: 6px;
         padding: 6px;

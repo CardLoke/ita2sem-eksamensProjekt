@@ -21,7 +21,6 @@ namespace ServerApi.Repositories
         }
         public void Booking(BookingData data)
         {
-            Console.WriteLine(data.Id);
             _bookings.InsertOne(data);
         }
         public async Task<List<BookingData>> GetRequests(User user)
