@@ -14,7 +14,6 @@ namespace ServerApi.Repositories
             var client = new MongoClient("mongodb+srv://kris600m:eyh94zkh@cluster0.xpou06p.mongodb.net/");
             var database = client.GetDatabase("SessionSync");
             _studios = database.GetCollection<Studio>("Studio");
-
         }
 
         public void RegisterStudio(Studio studio)
