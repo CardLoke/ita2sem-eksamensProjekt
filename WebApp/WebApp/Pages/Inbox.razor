@@ -125,49 +125,49 @@
                 }
             </div>
         </section>
+        
+        <!-- Your Private Studio Invites -->
         <section class="inbox-section">
             <h2 class="section-title">Your Private Studio Invites</h2>
             <div class="requests-grid">
                 @if (mInvites == null || !mInvites.Any())
                 {
-                    <p class="no-data">You dont have any invitation at this time.</p>
+                    <p class="no-data">You don't have any invitations at this time.</p>
                 }
                 else
                 {
                     @foreach (var invite in mInvites)
                     {
-                        
+                        <div class="booking-card">
                             <div class="card-header">
                                 <h3>@invite.Studio.StudioName</h3>
-                                
+                                <span class="status pending">Pending Invite</span>
                             </div>
-
                             <div class="card-body">
                                 <p><strong>Owner:</strong> @invite.Studio.Owner</p>
                                 <p><strong>Address:</strong> @invite.Studio.StudioAddress</p>
-                                
-
-
-
-                               
-                                    <div class="card-actions">
-                                        <button class="btn reject-btn"
-                                                @onclick="() => RejectInvite(invite.Id)">
-                                            Accept Invitation
-                                        </button>
-                                        <button ></button>
-                                        <button class="btn accept-btn" @onclick="()=> ApproveInvite(invite)"></button>
-                                    </div>
+                                @if (!string.IsNullOrEmpty(invite.Studio.StudioDescription))
+                                {
+                                    <p><strong>Description:</strong> @invite.Studio.StudioDescription</p>
                                 }
-
                             </div>
-                        
+                            <div class="card-actions">
+                                <button class="btn accept-btn"
+                                        @onclick="() => ApproveInvite(invite)">
+                                    Accept Invitation
+                                </button>
+                                <button class="btn reject-btn"
+                                        @onclick="() => RejectInvite(invite.Id)">
+                                    Decline
+                                </button>
+                            </div>
+                        </div>
                     }
                 }
             </div>
         </section>
-    </div>
-</div>
+        </div>
+        </div>
 
 <ModalDialog @ref="delete" Title="Confirm Deletion">
     Are you sure you want to delete your request?
@@ -233,10 +233,12 @@
     public async Task RejectInvite(int id)
     {
         await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{id}");
+        await InvokeAsync(StateHasChanged);
     }
     public async Task ApproveInvite(Invite invite)
     {
         await http.PutAsJsonAsync("http://localhost:5112/api/Studio/invite", invite);
         await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{invite.Id}");
+        await InvokeAsync(StateHasChanged);
     }
 }

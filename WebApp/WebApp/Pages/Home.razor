@@ -60,7 +60,7 @@
         }
         else
         {
-            @foreach (var s in GetFilteredStudios())
+            @foreach (var s in DisplayedStudios)
             {
                 @if (s.Visibility == privateIf || s.Owner == loggedIn?.Username)
                 {
@@ -166,8 +166,8 @@
 </div>
 @code
 {
-    Invite? mInvite;
-    Studio? tempStudio;
+    Invite? mInvite = new();
+    Studio? tempStudio = new();
     string errorColor = "";
     string error = "";
     List<User> allUsers = new();
@@ -227,26 +227,27 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private IEnumerable<Studio> DisplayedStudios => privateIf == "Private"
+     ? privateStudios
+     : GetFilteredStudios();
+
     private IEnumerable<Studio> GetFilteredStudios()
     {
-        IEnumerable<Studio> result = studios ?? new List<Studio>();
+        if (studios == null) return new List<Studio>();
 
-        result = result.Where(s =>
+        var result = studios.Where(s =>
             (maxPrice == 0 || s.StudioPrice <= maxPrice) &&
             (minCapacity == 0 || s.StudioSize >= minCapacity) &&
             (string.IsNullOrWhiteSpace(equipmentSearch) ||
              s.StudioEquipment.Contains(equipmentSearch, StringComparison.OrdinalIgnoreCase)) &&
             (string.IsNullOrWhiteSpace(studioSearch) ||
-             s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase)));
+             s.StudioName.Contains(studioSearch, StringComparison.OrdinalIgnoreCase))
+        );
 
         if (sortBy == "price")
-        {
             result = result.OrderBy(s => s.StudioPrice);
-        }
         else if (sortBy == "capacity")
-        {
             result = result.OrderByDescending(s => s.StudioSize);
-        }
 
         return result;
     }
@@ -306,17 +307,22 @@
             privateString = "Show Public Studios";
 
             // Show only private studios the user owns or has been invited to
-            privateStudios.Clear();
+
             foreach (var x in studios ?? new List<Studio>())
             {
                 if (x.Visibility == "Private" &&
                     (x.Owner == loggedIn?.Username ||
-                     (x.PrivateUsers != null && x.PrivateUsers.Contains(loggedIn?.Username))))
+                     x.PrivateUsers != null && x.PrivateUsers.Contains(loggedIn?.Username)))
                 {
+                    Console.WriteLine(loggedIn.Username);
                     privateStudios.Add(x);
                 }
             }
             studios = privateStudios.ToList();   // Make a copy
+            foreach(var x in studios)
+            {
+                Console.WriteLine(x.StudioName);
+            }
         }
         else
         {
@@ -325,12 +331,14 @@
 
             // Reset to show all studios
             await LoadStudios();   // This reloads the full list from API
+            privateStudios.Clear();
         }
 
         StateHasChanged();
     }
     public async Task InviteCheck(string username)
     {
+        allUsers = await http.GetFromJsonAsync<List<User>>("http://localhost:5112/api/user");
         bool status = false;
         foreach(User x in allUsers)
         {
@@ -349,10 +357,15 @@
         {
             errorColor = "#00ff00";
             error = "Invitation sent!";
-            mInvite.Username = username;
-            mInvite.Studio = tempStudio;
-            mInvite.Id = Random.Shared.Next();
-            await http.PutAsJsonAsync("http://localhost:5112/api/invite",mInvite);
+            
+            
+                mInvite.Username = username;
+                mInvite.Studio = tempStudio;
+                mInvite.Id = Random.Shared.Next();
+                Console.WriteLine("hej");
+                await http.PostAsJsonAsync("http://localhost:5112/api/invite",mInvite);
+            
+
         }
 
     }

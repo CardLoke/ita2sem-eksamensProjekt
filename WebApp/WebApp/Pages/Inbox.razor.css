@@ -184,3 +184,8 @@
 .close-btn:hover {
     color: red;
 }
+/* Invite card specific styling */
+.booking-card .status.pending {
+    background: #3b82f6;
+    color: white;
+}
