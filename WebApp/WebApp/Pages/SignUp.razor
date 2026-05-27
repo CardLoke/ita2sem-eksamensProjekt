@@ -1,9 +1,11 @@
 ﻿@page "/signUp"
 @inject HttpClient http
 @using Core.Model
+@using static WebApp.Config;
 @using Blazored.SessionStorage
 @inject NavigationManager navigationManager;
 @using WebApp.Components;
+
 
 <div class="signup-page">
     <div class="form-container">
@@ -63,7 +65,7 @@
         aNewUser.Id = Random.Shared.Next();
 
 
-        var result = await http.PostAsJsonAsync("http://localhost:5112/api/user/signUp", aNewUser);
+        var result = await http.PostAsJsonAsync($"{ServerUrl}/api/user/signUp", aNewUser);
 
 
         aNewUser = new();

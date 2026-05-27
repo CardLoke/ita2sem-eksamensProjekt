@@ -4,6 +4,7 @@
 @inject ISessionStorageService sessionStorage;
 @using Core.Model;
 @inject HttpClient httpClient
+@using static WebApp.Config;
 
 <h3>Edit Profile</h3>
 
@@ -51,7 +52,7 @@ else
 
     public async Task Save()
     {
-        var response = await httpClient.PutAsJsonAsync("http://localhost:5112/api/user/edit", user);
+        var response = await httpClient.PutAsJsonAsync($"{ServerUrl}/api/user/edit", user);
 
         if (response.IsSuccessStatusCode)
         {

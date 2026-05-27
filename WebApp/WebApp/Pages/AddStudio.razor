@@ -4,8 +4,7 @@
 @inject NavigationManager navigationManager;
 @using Blazored.SessionStorage;
 @inject ISessionStorageService sessionStorage;
-
-@using Core.Model;
+@using static WebApp.Config;
 
 <PageTitle>Add New Studio - Session Sync</PageTitle>
 
@@ -101,7 +100,7 @@
         aNewStudio.Owner = loggedIn?.Username;
         aNewStudio.Id = Random.Shared.Next(); 
 
-        var response = await http.PostAsJsonAsync("http://localhost:5112/api/studio/register", aNewStudio);
+        var response = await http.PostAsJsonAsync($"{ServerUrl}/api/studio/register", aNewStudio);
 
         if (response.IsSuccessStatusCode)
         {

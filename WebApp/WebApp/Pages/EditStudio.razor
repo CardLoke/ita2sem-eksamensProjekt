@@ -3,6 +3,7 @@
 @using Blazored.SessionStorage
 @inject ISessionStorageService sessionStorage
 @inject HttpClient httpClient
+@using static WebApp.Config
 
 <h3>Edit Studio</h3>
 
@@ -49,7 +50,7 @@ e
     protected override async Task OnInitializedAsync()
     {
         user = await sessionStorage.GetItemAsync<User?>("user");
-        var studios = await httpClient.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio");
+        var studios = await httpClient.GetFromJsonAsync<List<Studio>>($"{ServerUrl}/api/studio");
 
         if (studios != null)
         {
@@ -66,7 +67,7 @@ e
 
     public async Task Save()
     {
-        var response = await httpClient.PutAsJsonAsync("http://localhost:5112/api/studio/edit", studio);
+        var response = await httpClient.PutAsJsonAsync($"{ServerUrl}/api/studio/edit", studio);
         if (response.IsSuccessStatusCode)
         {
             message = "Studie Gemt";

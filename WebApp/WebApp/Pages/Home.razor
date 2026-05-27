@@ -7,6 +7,7 @@
 @page "/"
 @using System.Threading.Tasks
 @using WebApp.Components;
+@using static WebApp.Config;
 
 <div class="page">
     <PageTitle>Session Sync - Music Studios</PageTitle>
@@ -213,7 +214,7 @@
         data.StudioName = selectedStudio.StudioName;
         data.StudioAddress = selectedStudio.StudioAddress;
         data.Status = "Pending";
-        var response = await http.PostAsJsonAsync("http://localhost:5112/api/booking", data);
+        var response = await http.PostAsJsonAsync($"{ServerUrl}/api/booking", data);
 
         showBookingModal = false;
     }
@@ -226,7 +227,7 @@
 
     private async Task LoadStudios()
     {
-        studios = await http.GetFromJsonAsync<List<Studio>>("http://localhost:5112/api/studio");
+        studios = await http.GetFromJsonAsync<List<Studio>>($"{ServerUrl}/api/studio");
         await InvokeAsync(StateHasChanged);
     }
 
@@ -273,7 +274,7 @@
     {
         if (tempId == 0) return;
 
-        var response = await http.DeleteAsync($"http://localhost:5112/api/studio/delete/{tempId}");
+        var response = await http.DeleteAsync($"{ServerUrl}/api/studio/delete/{tempId}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -293,7 +294,7 @@
         {
             studioBookings =
                 await http.GetFromJsonAsync<List<BookingData>>(
-                    $"http://localhost:5112/api/booking/studio/{studio.Id}")
+                    $"{ServerUrl}/api/booking/studio/{studio.Id}")
                 ?? new();
             Console.WriteLine($"Loaded {studioBookings.Count} bookings for studio {studio.StudioName}");
         }
@@ -341,7 +342,7 @@
     }
     public async Task InviteCheck(string username)
     {
-        allUsers = await http.GetFromJsonAsync<List<User>>("http://localhost:5112/api/user");
+        allUsers = await http.GetFromJsonAsync<List<User>>($"{ServerUrl}/api/user");
         bool status = false;
         foreach(User x in allUsers)
         {
@@ -366,7 +367,7 @@
                 mInvite.Studio = tempStudio;
                 mInvite.Id = Random.Shared.Next();
                 Console.WriteLine("hej");
-                await http.PostAsJsonAsync("http://localhost:5112/api/invite",mInvite);
+            await http.PostAsJsonAsync($"{ServerUrl}/api/invite", mInvite);
             
 
         }

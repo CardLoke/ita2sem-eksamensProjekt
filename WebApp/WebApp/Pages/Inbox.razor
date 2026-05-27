@@ -6,6 +6,7 @@
 @inject HttpClient http
 @using System.Threading.Tasks
 @using WebApp.Components;
+@using static WebApp.Config;
 @page "/inbox"
 
 
@@ -187,7 +188,7 @@
     protected override async Task OnInitializedAsync()
     {
         loggedIn = await sessionStorage.GetItemAsync<User?>("user");
-        mInvites = await http.GetFromJsonAsync<List<Invite>>($"http://localhost:5112/api/invite/get/{loggedIn.Username}");
+        mInvites = await http.GetFromJsonAsync<List<Invite>>($"{ServerUrl}/api/invite/get/{loggedIn.Username}");
         if (loggedIn != null)
         {
             await LoadRequests();
@@ -196,8 +197,8 @@
 
     private async Task LoadRequests()
     {
-        var requestResponse = await http.PostAsJsonAsync("http://localhost:5112/api/booking/requests", loggedIn);
-        var studioResponse = await http.PostAsJsonAsync("http://localhost:5112/api/booking/studioRequests", loggedIn);
+        var requestResponse = await http.PostAsJsonAsync($"{ServerUrl}/api/booking/requests", loggedIn);
+        var studioResponse = await http.PostAsJsonAsync($"{ServerUrl}/api/booking/studioRequests", loggedIn);
 
         myRequests = await requestResponse.Content.ReadFromJsonAsync<List<BookingData>>();
         myStudioRequests = await studioResponse.Content.ReadFromJsonAsync<List<BookingData>>();
@@ -209,14 +210,14 @@
     {
         Console.WriteLine("hej");
 
-        await http.PutAsJsonAsync($"http://localhost:5112/api/booking/status/{bookingId}", newStatus);
+        await http.PutAsJsonAsync($"{ServerUrl}/api/booking/status/{bookingId}", newStatus);
 
         await LoadRequests();
     }
 
     public async Task Delete()
     {
-        var response = await http.DeleteAsync($"http://localhost:5112/api/booking/delete/{tempId}");
+        var response = await http.DeleteAsync($"{ServerUrl}/api/booking/delete/{tempId}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -232,13 +233,13 @@
     }
     public async Task RejectInvite(int id)
     {
-        await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{id}");
+        await http.DeleteAsync($"{ServerUrl}/api/invite/delete/{id}");
         await InvokeAsync(StateHasChanged);
     }
     public async Task ApproveInvite(Invite invite)
     {
-        await http.PutAsJsonAsync("http://localhost:5112/api/Studio/invite", invite);
-        await http.DeleteAsync($"http://localhost:5112/api/invite/delete/{invite.Id}");
+        await http.PutAsJsonAsync($"{ServerUrl}/api/Studio/invite", invite);
+        await http.DeleteAsync($"{ServerUrl}/api/invite/delete/{invite.Id}");
         await InvokeAsync(StateHasChanged);
     }
 }
