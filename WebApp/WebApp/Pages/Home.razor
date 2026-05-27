@@ -118,9 +118,12 @@
                                     View Calendar
                                 </button>
                             </div>
-                            <div class="book-container">
-                                <button class="book-btn" @onclick="() => ModalInvite(s)">Invite User</button>
-                            </div>
+                            @if (loggedIn != null && loggedIn.Username == s.Owner)
+                            {
+                                <div class="book-container">
+                                    <button class="book-btn" @onclick="() => ModalInvite(s)">Invite User</button>
+                                </div>
+                            }
                         </div>
                     </div>
                 }
