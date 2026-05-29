@@ -63,3 +63,7 @@ main {
     background-color: #00ffcc;
     color: black;
 }
+.page {
+    min-height: 100vh;
+    background-color: #0f0f1d;
+}
