@@ -108,8 +108,6 @@
     // create a CSS style string to position the booking block correctly in the calendar grid
     private string GetBookingStyle(BookingData b, DateTime day)
     {
-        var hourHeight = 35; // Must strictly match the CSS 35px
-
         var start = Combine(day, b.StartTime);
         var end = Combine(day, b.EndTime);
 
@@ -121,8 +119,9 @@
             endHours = 24;
         }
 
-        double top = startHours * hourHeight;
-        double height = (endHours - startHours) * hourHeight;
+        // NEW FLUID MATH: Calculate positions using percentages relative to a 24-hour container
+        double topPercent = (startHours / 24.0) * 100.0;
+        double heightPercent = ((endHours - startHours) / 24.0) * 100.0;
 
         var dayIndex = WeekDays.FindIndex(d => d.Date == day.Date);
         if (dayIndex < 0) dayIndex = 0;
@@ -130,38 +129,21 @@
         double columnWidth = 100.0 / 7.0;
         double leftPercent = dayIndex * columnWidth;
 
-        // Use InvariantCulture to enforce dots instead of commas (e.g., 122.5px instead of 122,5px)
         var ci = System.Globalization.CultureInfo.InvariantCulture;
-        if (b.Status == "Accepted")
-        {
-            return $@"
-                position: absolute;
-                top: {top.ToString("F2", ci)}px;
-                left: {leftPercent.ToString("F2", ci)}%;
-                width: calc({columnWidth.ToString("F2", ci)}% - 4px);
-                margin-left: 2px;
-                height: {height.ToString("F2", ci)}px;
-                background: #4f46e5;
-                color: white;
-                border-radius: 6px;
-                padding: 6px;
-                font-size: 12px;
-                overflow: hidden;
-                box-sizing: border-box;
-            ";
-        };
+        string background = b.Status == "Accepted" ? "#4f46e5" : "#fbbc04";
+
         return $@"
         position: absolute;
-        top: {top.ToString("F2", ci)}px;
+        top: {topPercent.ToString("F2", ci)}%;
         left: {leftPercent.ToString("F2", ci)}%;
         width: calc({columnWidth.ToString("F2", ci)}% - 4px);
         margin-left: 2px;
-        height: {height.ToString("F2", ci)}px;
-        background: #fbbc04;
+        height: {heightPercent.ToString("F2", ci)}%;
+        background: {background};
         color: white;
         border-radius: 6px;
         padding: 6px;
-        font-size: 12px;
+        font-size: 11px;
         overflow: hidden;
         box-sizing: border-box;
     ";
